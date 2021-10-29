@@ -5,4 +5,9 @@ public class ImageProcessorControllerImpl implements ImageProcessorController {
   public void startProcessor() throws IllegalStateException {
 
   }
+
+  private Appendable loadImage() {
+    return new StringBuilder();
+  }
+
 }

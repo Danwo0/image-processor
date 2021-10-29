@@ -1,2 +1,7 @@
-package PACKAGE_NAME;public enum GreyscaleMode {
+public enum GreyscaleMode {
+  ValueR,
+  ValueG,
+  ValueB,
+  Intensity,
+  Luma,
 }

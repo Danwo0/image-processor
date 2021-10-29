@@ -14,15 +14,14 @@ public class ImageUtil {
    *
    * @param filename the path of the file. 
    */
-  public static void readPPM(String filename) {
+  public static Appendable readPPM(String filename) throws IllegalArgumentException {
     Scanner sc;
     
     try {
         sc = new Scanner(new FileInputStream(filename));
     }
     catch (FileNotFoundException e) {
-        System.out.println("File "+filename+ " not found!");
-        return;
+        throw new IllegalArgumentException("File "+filename+ " not found!");
     }
     StringBuilder builder = new StringBuilder();
     //read the file line by line, and populate a string. This will throw away any comment lines
@@ -32,7 +31,10 @@ public class ImageUtil {
             builder.append(s+System.lineSeparator());
         }
     }
-    
+
+    return builder;
+
+    /*
     //now set up the scanner to read from the string we just built
     sc = new Scanner(builder.toString());
 
@@ -56,21 +58,7 @@ public class ImageUtil {
             int b = sc.nextInt();
             System.out.println("Color of pixel ("+j+","+i+"): "+ r+","+g+","+b);
         }
-    }
-  }
-
-  //demo main
-  public static void main(String []args) {
-      String filename;
-      
-      if (args.length>0) {
-          filename = args[0];
-      }
-      else {
-          filename = "sample.ppm";
-      }
-      
-      ImageUtil.readPPM(filename);
+    }*/
   }
 }
 
