@@ -1,3 +1,5 @@
+package model;
+
 public interface ImageProcessorModel {
   public void brighten (int amount);
 
