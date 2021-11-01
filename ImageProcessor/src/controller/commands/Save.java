@@ -10,6 +10,7 @@ public class Save implements ImageProcessorCommand {
   String imageName;
 
   public Save(String outName, String imageName) {
+    this.outName = outName;
     this.imageName = imageName;
   }
 
