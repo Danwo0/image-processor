@@ -12,8 +12,8 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
   private Map<String, Integer> maxValue;
 
   public ImageProcessorModelImpl() throws IllegalArgumentException {
-    this.images = new HashMap<String, int[][][]>();
-    this.maxValue = new HashMap<String, Integer>();
+    this.images = new HashMap<>();
+    this.maxValue = new HashMap<>();
   }
 
   @Override
@@ -63,10 +63,10 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
             .append(image[0].length)
             .append(System.lineSeparator());
 
-    for (int i = 0; i < image.length; i++) {
-      for (int j = 0; j < image[i].length; j++) {
-        for (int k = 0; k < image[i][j].length; k++) {
-          output.append(image[i][j][k]).append(System.lineSeparator());
+    for (int[][] row : image) {
+      for (int[] pixel : row) {
+        for (int rgb : pixel) {
+          output.append(rgb).append(System.lineSeparator());
         }
       }
     }
@@ -104,119 +104,120 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
   }
 
   @Override
-  public void flipVertical(String in, String out) {
+  public void flipVertical(String in, String out) throws IllegalArgumentException {
+    int[][][] image;
 
-    for (int i = 0; i < height; i++) {
-      StringBuilder sb1 = new StringBuilder();
-      for (int j = 0; j < width * 3; j++) {
-        sb1.append(sc.nextLine()).append(System.lineSeparator());
-      }
-      flipImage.insert(0, sb1);
-
-    }
     try {
-      output.append(flipImage.toString());
-    } catch (IOException e) {
-      throw new IllegalStateException("Failed to append");
+      image = images.get(in);
+    } catch (NullPointerException e) {
+      throw new IllegalArgumentException("Image name is invalid");
     }
-    this.image = output;
+
+    int[][][] output = new int[image.length][image[0].length][3];
+
+    int j = image.length;
+
+    for (int i = 0; i < image.length; i++) {
+      output[image.length - 1 - i] = image[i];
+    }
+
+    images.put(out, output);
   }
 
   @Override
-  public void flipHorizontal(String in, String out) {
-    Scanner sc = new Scanner(image.toString());
-    Appendable output = loadImageInfo(sc);
+  public void flipHorizontal(String in, String out) throws IllegalArgumentException {
+    int[][][] image;
 
-    for (int i = 0; i < height; i++) {
-      StringBuilder sb1 = new StringBuilder();
-      for (int j = 0; j < width * 3; j++) {
-        sb1.insert(0, System.lineSeparator()).insert(0, sc.nextLine());
-      }
-      try {
-        output.append(sb1.toString());
-      } catch (IOException e) {
-        throw new IllegalStateException("Failed to append");
+    try {
+      image = images.get(in);
+    } catch (NullPointerException e) {
+      throw new IllegalArgumentException("Image name is invalid");
+    }
+
+    int[][][] output = new int[image.length][image[0].length][3];
+
+    for (int i = 0; i < image.length; i++) {
+      for (int j = 0; j < image[i].length; j++) {
+        output[i][image[i].length - 1 - j] = image[i][j];
       }
     }
-    this.image = output;
+
+    images.put(out, output);
   }
 
   @Override
-  public void greyscale(String in, String out, GreyscaleMode mode) {
-    Scanner sc = new Scanner(image.toString());
-    Appendable output = loadImageInfo(sc);
+  public void greyscale(String in, String out, GreyscaleMode mode) throws IllegalArgumentException {
+    int[][][] image;
+
+    try {
+      image = images.get(in);
+    } catch (NullPointerException e) {
+      throw new IllegalArgumentException("Image name is invalid");
+    }
+
+    int[][][] output = new int[image.length][image[0].length][3];
 
     switch (mode) {
       case ValueR:
-        while (sc.hasNext()) {
-          int value = sc.nextInt();
-          sc.nextInt();
-          sc.nextInt();
-          try {
-            output.append(Integer.toString(value)).append(System.lineSeparator());
-            output.append(Integer.toString(value)).append(System.lineSeparator());
-            output.append(Integer.toString(value)).append(System.lineSeparator());
-          } catch (IOException e) {
-            throw new IllegalStateException("Failed to read from image");
+        for (int i = 0; i < image.length; i++) {
+          for (int j = 0; j < image[i].length; j++) {
+            for (int k = 0; k < image[i][j].length; k++) {
+              output[i][j][k] = image[i][j][0];
+            }
           }
         }
         break;
       case ValueG:
-        while (sc.hasNext()) {
-          sc.nextInt();
-          int value = sc.nextInt();
-          sc.nextInt();
-          try {
-            output.append(Integer.toString(value)).append(System.lineSeparator());
-            output.append(Integer.toString(value)).append(System.lineSeparator());
-            output.append(Integer.toString(value)).append(System.lineSeparator());
-          } catch (IOException e) {
-            throw new IllegalStateException("Failed to read from image");
+        for (int i = 0; i < image.length; i++) {
+          for (int j = 0; j < image[i].length; j++) {
+            for (int k = 0; k < image[i][j].length; k++) {
+              output[i][j][k] = image[i][j][1];
+            }
           }
         }
         break;
       case ValueB:
-        while (sc.hasNext()) {
-          sc.nextInt();
-          sc.nextInt();
-          int value = sc.nextInt();
-          try {
-            output.append(Integer.toString(value)).append(System.lineSeparator());
-            output.append(Integer.toString(value)).append(System.lineSeparator());
-            output.append(Integer.toString(value)).append(System.lineSeparator());
-          } catch (IOException e) {
-            throw new IllegalStateException("Failed to read from image");
+        for (int i = 0; i < image.length; i++) {
+          for (int j = 0; j < image[i].length; j++) {
+            for (int k = 0; k < image[i][j].length; k++) {
+              output[i][j][k] = image[i][j][2];
+            }
+          }
+        }
+        break;
+      case Value:
+        for (int i = 0; i < image.length; i++) {
+          for (int j = 0; j < image[i].length; j++) {
+            for (int k = 0; k < image[i][j].length; k++) {
+              output[i][j][k] = Math.max(Math.max(image[i][j][0],image[i][j][1]), image[i][j][2]);
+            }
           }
         }
         break;
       case Intensity:
-        while (sc.hasNext()) {
-          int value = (sc.nextInt() + sc.nextInt() + sc.nextInt()) / 3;
-          try {
-            output.append(Integer.toString(value)).append(System.lineSeparator());
-            output.append(Integer.toString(value)).append(System.lineSeparator());
-            output.append(Integer.toString(value)).append(System.lineSeparator());
-          } catch (IOException e) {
-            throw new IllegalStateException("Failed to read from image");
+        for (int i = 0; i < image.length; i++) {
+          for (int j = 0; j < image[i].length; j++) {
+            for (int k = 0; k < image[i][j].length; k++) {
+              output[i][j][k] = (image[i][j][0] + image[i][j][1] + image[i][j][2]) / 3;
+            }
           }
         }
         break;
       case Luma:
-        while (sc.hasNext()) {
-          int value = (int) (0.2126 * sc.nextInt() + 0.7152 * sc.nextInt() + 0.0722 * sc.nextInt());
-          try {
-            output.append(Integer.toString(value)).append(System.lineSeparator());
-            output.append(Integer.toString(value)).append(System.lineSeparator());
-            output.append(Integer.toString(value)).append(System.lineSeparator());
-          } catch (IOException e) {
-            throw new IllegalStateException("Failed to read from image");
+        for (int i = 0; i < image.length; i++) {
+          for (int j = 0; j < image[i].length; j++) {
+            for (int k = 0; k < image[i][j].length; k++) {
+              output[i][j][k] = (int) (0.2126 * image[i][j][0] + 0.7152 * image[i][j][1] + 0.0722
+                      * image[i][j][2]);
+            }
           }
         }
         break;
       default:
+        output = image;
         break;
     }
 
-    this.image = output;
+    images.put(out, output);
   }
 }

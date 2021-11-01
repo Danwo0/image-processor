@@ -14,6 +14,7 @@ public interface ImageProcessorModel {
     ValueR,
     ValueG,
     ValueB,
+    Value,
     Intensity,
     Luma,
   }
