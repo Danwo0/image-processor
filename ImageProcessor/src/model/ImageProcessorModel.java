@@ -36,22 +36,22 @@ public interface ImageProcessorModel {
    * @param amount amount to brighten or darken the image by
    * @throws IllegalArgumentException if given amount is invalid
    */
-  void changeBrightness(String inName, String outName, int amount) throws IllegalArgumentException;
+  void changeBrightness(String in, String out, int amount) throws IllegalArgumentException;
 
   /**
    * Flips the image over the x-axis.
    */
-  void flipVertical(String inName, String outName);
+  void flipVertical(String in, String out);
 
   /**
    * Flips the image over the y-axis.
    */
-  void flipHorizontal(String inName, String outName);
+  void flipHorizontal(String in, String out);
 
   /**
    * Makes the image black and white by the given mode.
    *
    * @param mode The mode in which the greyscale is done by
    */
-  void greyscale(String inName, String outName, GreyscaleMode mode);
+  void greyscale(String in, String out, GreyscaleMode mode);
 }

@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 public class ImageProcessorModelImpl implements ImageProcessorModel {
   private Map<String, int[][][]> images;
-  private Map<String, Integer> imagesInfo;
+  private Map<String, Integer> maxValue;
 
   public ImageProcessorModelImpl() throws IllegalArgumentException {
     this.images = new HashMap<String, int[][][]>();
@@ -18,23 +18,28 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
   @Override
   public void loadImage(String fileName, String imageName) throws IllegalArgumentException {
     Scanner sc;
-    int height;
-    int width;
+
 
     try {
       sc = new Scanner(new FileInputStream(fileName));
     } catch (FileNotFoundException e) {
       throw new IllegalArgumentException("File " + fileName + " not found!");
     }
-    width = sc.nextInt();
-    height = sc.nextInt();
-    sc.nextLine();
 
-    int[][][] image = new int[width][height][3];
+    if (!sc.nextLine().equals("P3")) {
+      throw new IllegalArgumentException("Invalid PPM file: plain RAW file should begin with P3");
+    }
 
-    for (int i = 0; i < width; i ++) {
-      for (int j = 0; j < height; j ++){
-        
+    int[][][] image = new int[sc.nextInt()][sc.nextInt()][3];
+    maxValue.put(imageName, sc.nextInt());
+
+    for (int i = 0; i < image.length; i++) {
+      for (int j = 0; j < image[i].length; j++) {
+        for (int k = 0; k < image[i][j].length; k++) {
+          image[i][j][0] = sc.nextInt();
+          image[i][j][1] = sc.nextInt();
+          image[i][j][2] = sc.nextInt();
+        }
       }
     }
 
@@ -42,27 +47,37 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
   }
 
   @Override
-  public void changeBrightness(String inName, String outName, int amount) throws IllegalStateException {
-    Scanner sc = new Scanner(image.toString());
-    Appendable output = loadImageInfo(sc);
-    int color;
-    while (sc.hasNext()) {
-      try {
-        color = sc.nextInt();
-        if (amount > 0 && color + amount > 255) {
-          color = 255;
-        } else if (amount < 0 && color + amount < 0) {
-          color = 0;
-        } else {
-          color = color + amount;
-        }
-        output.append(Integer.toString(color)).append(System.lineSeparator());
-      } catch (IOException e) {
-        throw new IllegalStateException("Failed to read from image");
-      }
+  public Readable saveImage(String imageName) throws IllegalArgumentException {
+    return null;
+  }
+
+  @Override
+  public void changeBrightness(String in, String out, int amount) throws IllegalArgumentException {
+    int[][][] image;
+
+    try {
+      image = images.get(in);
+    } catch (NullPointerException e) {
+      throw new IllegalArgumentException("Image name is invalid");
     }
 
-    this.image = output;
+    int[][][] output = new int[image.length][image[0].length][3];
+
+    for (int i = 0; i < image.length; i++) {
+      for (int j = 0; j < image[i].length; j++) {
+        for (int k = 0; k < image[i][j].length; k++) {
+          int value = image[i][j][k];
+          if (amount > 0 && value + amount > 255) {
+            output[i][j][k] = 255;
+          } else if (amount < 0 && value + amount < 0) {
+            output[i][j][k] = 0;
+          } else {
+            output[i][j][k] = value + amount;
+          }
+        }
+      }
+    }
+    images.put(out, output);
   }
 
   @Override
