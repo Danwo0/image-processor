@@ -34,11 +34,9 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
 
     for (int i = 0; i < image.length; i++) {
       for (int j = 0; j < image[i].length; j++) {
-        for (int k = 0; k < image[i][j].length; k++) {
           image[i][j][0] = sc.nextInt();
           image[i][j][1] = sc.nextInt();
           image[i][j][2] = sc.nextInt();
-        }
       }
     }
 
