@@ -16,7 +16,7 @@ public class ImageProcessorModelImplTest {
 
   @Test
   public void testLoad() {
-    model.loadImage("pix.ppm", "Test");
+    model.loadImage("ImageProcessor/pix.ppm", "Test");
     assertEquals(model.saveImage("Test"),"");
   }
 }
