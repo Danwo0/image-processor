@@ -11,10 +11,10 @@ public interface ImageProcessorModel {
    * either by red value, green value, blue value, intensity, or Luma.
    */
   enum GreyscaleMode {
+    Value,
     ValueR,
     ValueG,
     ValueB,
-    Value,
     Intensity,
     Luma,
   }

@@ -2,7 +2,6 @@ package model;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -158,6 +157,15 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
     int[][][] output = new int[image.length][image[0].length][3];
 
     switch (mode) {
+      case Value:
+        for (int i = 0; i < image.length; i++) {
+          for (int j = 0; j < image[i].length; j++) {
+            for (int k = 0; k < image[i][j].length; k++) {
+              output[i][j][k] = Math.max(Math.max(image[i][j][0],image[i][j][1]), image[i][j][2]);
+            }
+          }
+        }
+        break;
       case ValueR:
         for (int i = 0; i < image.length; i++) {
           for (int j = 0; j < image[i].length; j++) {
@@ -181,15 +189,6 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
           for (int j = 0; j < image[i].length; j++) {
             for (int k = 0; k < image[i][j].length; k++) {
               output[i][j][k] = image[i][j][2];
-            }
-          }
-        }
-        break;
-      case Value:
-        for (int i = 0; i < image.length; i++) {
-          for (int j = 0; j < image[i].length; j++) {
-            for (int k = 0; k < image[i][j].length; k++) {
-              output[i][j][k] = Math.max(Math.max(image[i][j][0],image[i][j][1]), image[i][j][2]);
             }
           }
         }
