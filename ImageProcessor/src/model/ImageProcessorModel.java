@@ -7,19 +7,6 @@ package model;
 public interface ImageProcessorModel {
 
   /**
-   * This enum represents the possible mode for greycscale. The mode can be
-   * either by red value, green value, blue value, intensity, or Luma.
-   */
-  enum GreyscaleMode {
-    Value,
-    ValueR,
-    ValueG,
-    ValueB,
-    Intensity,
-    Luma,
-  }
-
-  /**
    * Loads the given image into the model.
    *
    * @param fileName  the name of the file to load
@@ -27,7 +14,6 @@ public interface ImageProcessorModel {
    * @throws IllegalArgumentException if given an invalid file name
    */
   void loadImage(String fileName, String imageName) throws IllegalArgumentException;
-
 
   String saveImage(String imageName) throws IllegalArgumentException;
 
@@ -55,4 +41,17 @@ public interface ImageProcessorModel {
    * @param mode The mode in which the greyscale is done by
    */
   void greyscale(String in, String out, GreyscaleMode mode);
+
+  /**
+   * This enum represents the possible mode for greycscale. The mode can be
+   * either by red value, green value, blue value, intensity, or Luma.
+   */
+  enum GreyscaleMode {
+    Value,
+    ValueR,
+    ValueG,
+    ValueB,
+    Intensity,
+    Luma,
+  }
 }
