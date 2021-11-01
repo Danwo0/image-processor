@@ -29,6 +29,8 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
       throw new IllegalArgumentException("Invalid PPM file: plain RAW file should begin with P3");
     }
 
+    sc.skip("#");
+
     int[][][] image = new int[sc.nextInt()][sc.nextInt()][3];
     maxValue.put(imageName, sc.nextInt());
 
