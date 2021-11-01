@@ -22,12 +22,12 @@ public class ImageProcessorModelImplTest {
   public void testLoad() {
     String actual = "";
     try {
-      actual = Files.readString(Paths.get("ImageProcessor/pix.ppm"));
+      actual = Files.readString(Paths.get("pix.ppm"));
     } catch (IOException e) {
       e.printStackTrace();
     }
 
-    model.loadImage("ImageProcessor/pix.ppm", "Test");
+    model.loadImage("pix.ppm", "Test");
     assertEquals(model.saveImage("Test"),actual);
   }
 }
