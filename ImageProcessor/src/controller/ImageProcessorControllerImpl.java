@@ -21,7 +21,7 @@ public class ImageProcessorControllerImpl implements ImageProcessorController {
   ImageProcessorModel model;
   ImageProcessorView view;
 
-  ImageProcessorControllerImpl(ImageProcessorModel model, ImageProcessorView view, Readable read)
+  public ImageProcessorControllerImpl(ImageProcessorModel model, ImageProcessorView view, Readable read)
           throws IllegalArgumentException {
     if (model == null || view == null || read == null) {
       throw new IllegalArgumentException("Given null.");
