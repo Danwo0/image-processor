@@ -3,6 +3,10 @@ package model;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import static org.junit.Assert.assertEquals;
 
 public class ImageProcessorModelImplTest {
@@ -16,7 +20,14 @@ public class ImageProcessorModelImplTest {
 
   @Test
   public void testLoad() {
+    String actual = "";
+    try {
+      actual = Files.readString(Paths.get("ImageProcessor/pix.ppm"));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
     model.loadImage("ImageProcessor/pix.ppm", "Test");
-    assertEquals(model.saveImage("Test"),"");
+    assertEquals(model.saveImage("Test"),actual);
   }
 }

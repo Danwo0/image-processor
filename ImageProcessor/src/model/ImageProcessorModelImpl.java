@@ -29,9 +29,18 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
       throw new IllegalArgumentException("Invalid PPM file: plain RAW file should begin with P3");
     }
 
-    sc.skip("#");
+    String temp = sc.nextLine();
 
-    int[][][] image = new int[sc.nextInt()][sc.nextInt()][3];
+    if (temp.startsWith("#")) {
+      temp = sc.nextLine();
+    }
+
+    String[] dim = temp.split(" ");
+
+    int width = Integer.parseInt(dim[0]);
+    int height = Integer.parseInt(dim[1]);
+
+    int[][][] image = new int[width][height][3];
     maxValue.put(imageName, sc.nextInt());
 
     for (int i = 0; i < image.length; i++) {
@@ -61,6 +70,7 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
             .append(" ")
             .append(image[0].length)
             .append(System.lineSeparator());
+    output.append(maxValue.get(imageName)).append(System.lineSeparator());
 
     for (int[][] row : image) {
       for (int[] pixel : row) {
@@ -70,7 +80,7 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
       }
     }
 
-    return output.toString();
+    return output.toString().trim();
   }
 
   @Override
