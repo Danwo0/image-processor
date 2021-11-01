@@ -40,7 +40,7 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
     int width = Integer.parseInt(dim[0]);
     int height = Integer.parseInt(dim[1]);
 
-    int[][][] image = new int[width][height][3];
+    int[][][] image = new int[height][width][3];
     maxValue.put(imageName, sc.nextInt());
 
     for (int i = 0; i < image.length; i++) {
@@ -66,9 +66,9 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
 
     StringBuilder output = new StringBuilder("P3" + System.lineSeparator());
     output.append("# Created by us").append(System.lineSeparator());
-    output.append(image.length)
+    output.append(image[0].length)
             .append(" ")
-            .append(image[0].length)
+            .append(image.length)
             .append(System.lineSeparator());
     output.append(maxValue.get(imageName)).append(System.lineSeparator());
 
