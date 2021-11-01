@@ -114,8 +114,6 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
 
     int[][][] output = new int[image.length][image[0].length][3];
 
-    int j = image.length;
-
     for (int i = 0; i < image.length; i++) {
       output[image.length - 1 - i] = image[i];
     }
