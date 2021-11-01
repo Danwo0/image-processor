@@ -19,26 +19,39 @@ public interface ImageProcessorModel {
   }
 
   /**
+   * Loads the given image into the model.
+   *
+   * @param fileName  the name of the file to load
+   * @param imageName the name to refer to loaded image
+   * @throws IllegalArgumentException if given an invalid file name
+   */
+  void loadImage(String fileName, String imageName) throws IllegalArgumentException;
+
+
+  Readable saveImage(String imageName) throws IllegalArgumentException;
+
+  /**
    * Change the brightness of the image by the given amount.
    *
    * @param amount amount to brighten or darken the image by
    * @throws IllegalArgumentException if given amount is invalid
    */
-  void changeBrightness(int amount) throws IllegalArgumentException;
+  void changeBrightness(String inName, String outName, int amount) throws IllegalArgumentException;
 
   /**
    * Flips the image over the x-axis.
    */
-  void flipVertical();
+  void flipVertical(String inName, String outName);
 
   /**
    * Flips the image over the y-axis.
    */
-  void flipHorizontal();
+  void flipHorizontal(String inName, String outName);
 
   /**
    * Makes the image black and white by the given mode.
+   *
    * @param mode The mode in which the greyscale is done by
    */
-  void greyscale(GreyscaleMode mode);
+  void greyscale(String inName, String outName, GreyscaleMode mode);
 }

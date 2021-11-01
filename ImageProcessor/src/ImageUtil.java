@@ -14,6 +14,7 @@ public class ImageUtil {
    *
    * @param filename the path of the file. 
    */
+
   public static Appendable readPPM(String filename) throws IllegalArgumentException {
     Scanner sc;
     

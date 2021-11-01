@@ -1,27 +1,48 @@
 package model;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class ImageProcessorModelImpl implements ImageProcessorModel {
-  private Appendable image;
-  private int height;
-  private int width;
+  private Map<String, int[][][]> images;
+  private Map<String, Integer> imagesInfo;
 
-  public ImageProcessorModelImpl(Appendable image) throws IllegalArgumentException {
-    if (image == null) {
-      throw new IllegalArgumentException("Given null for image.");
-    }
-    this.image = image;
-
-    Scanner sc = new Scanner(this.image.toString());
-    sc.next();
-    this.width = sc.nextInt();
-    this.height = sc.nextInt();
+  public ImageProcessorModelImpl() throws IllegalArgumentException {
+    this.images = new HashMap<String, int[][][]>();
   }
 
   @Override
-  public void changeBrightness(int amount) throws IllegalStateException {
+  public void loadImage(String fileName, String imageName) throws IllegalArgumentException {
+    Scanner sc;
+    int height;
+    int width;
+
+    try {
+      sc = new Scanner(new FileInputStream(fileName));
+    } catch (FileNotFoundException e) {
+      throw new IllegalArgumentException("File " + fileName + " not found!");
+    }
+    width = sc.nextInt();
+    height = sc.nextInt();
+    sc.nextLine();
+
+    int[][][] image = new int[width][height][3];
+
+    for (int i = 0; i < width; i ++) {
+      for (int j = 0; j < height; j ++){
+        
+      }
+    }
+
+    images.put(imageName, image);
+  }
+
+  @Override
+  public void changeBrightness(String inName, String outName, int amount) throws IllegalStateException {
     Scanner sc = new Scanner(image.toString());
     Appendable output = loadImageInfo(sc);
     int color;
@@ -45,7 +66,7 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
   }
 
   @Override
-  public void flipVertical() {
+  public void flipVertical(String inName, String outName) {
     Scanner sc = new Scanner(image.toString());
     Appendable output = loadImageInfo(sc);
     StringBuilder flipImage = new StringBuilder();
@@ -67,7 +88,7 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
   }
 
   @Override
-  public void flipHorizontal() {
+  public void flipHorizontal(String inName, String outName) {
     Scanner sc = new Scanner(image.toString());
     Appendable output = loadImageInfo(sc);
 
@@ -86,7 +107,7 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
   }
 
   @Override
-  public void greyscale(GreyscaleMode mode) {
+  public void greyscale(String inName, String outName, GreyscaleMode mode) {
     Scanner sc = new Scanner(image.toString());
     Appendable output = loadImageInfo(sc);
 
@@ -147,7 +168,7 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
         break;
       case Luma:
         while (sc.hasNext()) {
-          int value = (int)(0.2126 * sc.nextInt() + 0.7152 * sc.nextInt() + 0.0722 * sc.nextInt());
+          int value = (int) (0.2126 * sc.nextInt() + 0.7152 * sc.nextInt() + 0.0722 * sc.nextInt());
           try {
             output.append(Integer.toString(value)).append(System.lineSeparator());
             output.append(Integer.toString(value)).append(System.lineSeparator());
@@ -180,9 +201,5 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
     }
 
     return output;
-  }
-
-  public String toString() {
-    return image.toString();
   }
 }
