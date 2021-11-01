@@ -22,7 +22,7 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
     try {
       sc = new Scanner(new FileInputStream(fileName));
     } catch (FileNotFoundException e) {
-      throw new IllegalArgumentException("File " + fileName + " not found!");
+      throw new IllegalArgumentException(e.getMessage());
     }
 
     if (!sc.nextLine().equals("P3")) {
@@ -34,9 +34,9 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
 
     for (int i = 0; i < image.length; i++) {
       for (int j = 0; j < image[i].length; j++) {
-          image[i][j][0] = sc.nextInt();
-          image[i][j][1] = sc.nextInt();
-          image[i][j][2] = sc.nextInt();
+        image[i][j][0] = sc.nextInt();
+        image[i][j][1] = sc.nextInt();
+        image[i][j][2] = sc.nextInt();
       }
     }
 
@@ -157,7 +157,7 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
         for (int i = 0; i < image.length; i++) {
           for (int j = 0; j < image[i].length; j++) {
             for (int k = 0; k < image[i][j].length; k++) {
-              output[i][j][k] = Math.max(Math.max(image[i][j][0],image[i][j][1]), image[i][j][2]);
+              output[i][j][k] = Math.max(Math.max(image[i][j][0], image[i][j][1]), image[i][j][2]);
             }
           }
         }
