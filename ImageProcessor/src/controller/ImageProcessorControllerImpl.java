@@ -56,6 +56,10 @@ public class ImageProcessorControllerImpl implements ImageProcessorController {
     while (sc.hasNext()) {
       ImageProcessorCommand c;
       String in = sc.next();
+
+      if (in.equalsIgnoreCase("q") || in.equalsIgnoreCase("quit"))
+        return;
+
       Function<Scanner, ImageProcessorCommand> cmd = knownCommands.getOrDefault(in, null);
 
       if (cmd == null) {
