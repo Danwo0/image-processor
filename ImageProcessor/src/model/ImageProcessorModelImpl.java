@@ -13,12 +13,12 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
 
   public ImageProcessorModelImpl() throws IllegalArgumentException {
     this.images = new HashMap<String, int[][][]>();
+    this.maxValue = new HashMap<String, Integer>();
   }
 
   @Override
   public void loadImage(String fileName, String imageName) throws IllegalArgumentException {
     Scanner sc;
-
 
     try {
       sc = new Scanner(new FileInputStream(fileName));
@@ -47,8 +47,31 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
   }
 
   @Override
-  public Readable saveImage(String imageName) throws IllegalArgumentException {
-    return null;
+  public String saveImage(String imageName) throws IllegalArgumentException {
+    int[][][] image;
+
+    try {
+      image = images.get(imageName);
+    } catch (NullPointerException e) {
+      throw new IllegalArgumentException("Image name is invalid");
+    }
+
+    StringBuilder output = new StringBuilder("P3" + System.lineSeparator());
+    output.append("# Created by us").append(System.lineSeparator());
+    output.append(image.length)
+            .append(" ")
+            .append(image[0].length)
+            .append(System.lineSeparator());
+
+    for (int i = 0; i < image.length; i++) {
+      for (int j = 0; j < image[i].length; j++) {
+        for (int k = 0; k < image[i][j].length; k++) {
+          output.append(image[i][j][k]).append(System.lineSeparator());
+        }
+      }
+    }
+
+    return output.toString();
   }
 
   @Override
@@ -81,10 +104,7 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
   }
 
   @Override
-  public void flipVertical(String inName, String outName) {
-    Scanner sc = new Scanner(image.toString());
-    Appendable output = loadImageInfo(sc);
-    StringBuilder flipImage = new StringBuilder();
+  public void flipVertical(String in, String out) {
 
     for (int i = 0; i < height; i++) {
       StringBuilder sb1 = new StringBuilder();
@@ -103,7 +123,7 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
   }
 
   @Override
-  public void flipHorizontal(String inName, String outName) {
+  public void flipHorizontal(String in, String out) {
     Scanner sc = new Scanner(image.toString());
     Appendable output = loadImageInfo(sc);
 
@@ -122,7 +142,7 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
   }
 
   @Override
-  public void greyscale(String inName, String outName, GreyscaleMode mode) {
+  public void greyscale(String in, String out, GreyscaleMode mode) {
     Scanner sc = new Scanner(image.toString());
     Appendable output = loadImageInfo(sc);
 
@@ -198,23 +218,5 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
     }
 
     this.image = output;
-  }
-
-  private Appendable loadImageInfo(Scanner sc) {
-    Appendable output = new StringBuilder();
-    String curLine = sc.nextLine();
-
-    if (!curLine.equals("P3")) {
-      throw new IllegalStateException("Invalid PPM file: plain RAW file should begin with P3");
-    }
-    try {
-      output.append(curLine).append(System.lineSeparator());
-      output.append(sc.nextLine()).append(System.lineSeparator());
-      output.append(sc.nextLine()).append(System.lineSeparator());
-    } catch (IOException e) {
-      throw new IllegalStateException("Failed to read from image.");
-    }
-
-    return output;
   }
 }

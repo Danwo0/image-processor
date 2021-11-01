@@ -28,7 +28,7 @@ public interface ImageProcessorModel {
   void loadImage(String fileName, String imageName) throws IllegalArgumentException;
 
 
-  Readable saveImage(String imageName) throws IllegalArgumentException;
+  String saveImage(String imageName) throws IllegalArgumentException;
 
   /**
    * Change the brightness of the image by the given amount.
