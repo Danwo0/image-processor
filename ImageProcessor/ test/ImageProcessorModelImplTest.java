@@ -30,8 +30,34 @@ public class ImageProcessorModelImplTest {
     model.loadImage("./res/ThisFileDoesnt.Exist", "haha");
   }
 
+  @Test(expected = IllegalArgumentException.class)
+  public void saveNotInMap() {
+    model.saveImage("DoesntExist");
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void nullBrighten() {
+    model.changeBrightness("DoesntExist", "Haha", 1);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void nullVertical() {
+    model.flipVertical("DoesntExist", "Haha");
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void nullHorizontal() {
+    model.flipHorizontal("DoesntExist", "Haha");
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void nullGreyscale() {
+    model.greyscale("DoesntExist", "Haha", ImageProcessorModel.GreyscaleMode.Value);
+  }
+
   @Test
   public void testLoad() {
+    model = new ImageProcessorModelImpl();
     String actual = "";
     try {
       actual = Files.readString(Paths.get("./res/pix.ppm"));
@@ -43,8 +69,35 @@ public class ImageProcessorModelImplTest {
     assertEquals(model.saveImage("Test"), actual);
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void saveNotInMap() {
-    model.saveImage("DoesntExist");
+  @Test
+  public void testOverwrite() {
+    model = new ImageProcessorModelImpl();
+    String pix = "";
+    String pix2 = "";
+    try {
+      pix = Files.readString(Paths.get("./res/pix.ppm"));
+      pix2 = Files.readString(Paths.get("./res/pix2.ppm"));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    model.loadImage("./res/pix.ppm", "Test");
+    assertEquals(model.saveImage("Test"), pix);
+    model.loadImage("./res/pix2.ppm", "Test2");
+    assertEquals(model.saveImage("Test2"), pix2);
+    model.loadImage("./res/pix2.ppm", "Test");
+    assertEquals(model.saveImage("Test"), pix2);
+  }
+
+  @Test
+  public void testBrighten() {
+    model = new ImageProcessorModelImpl();
+    String pix = "";
+    try {
+      pix = Files.readString(Paths.get("./res/pix.ppm"));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
   }
 }
