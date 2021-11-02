@@ -26,6 +26,9 @@ public class ImageProcessorModelImplTest {
   private String pixGreyB;
   private String pixGreyLuma;
   private String pixGreyIntensity;
+  private String pixVerticalHorizontal;
+  private String pixHorizontalVertical;
+
   @Before
   public void setUp() {
     model = new ImageProcessorModelImpl();
@@ -43,6 +46,8 @@ public class ImageProcessorModelImplTest {
       pixGreyB = Files.readString(Paths.get("./res/pixGreyB.ppm"));
       pixGreyLuma = Files.readString(Paths.get("./res/pixGreyLuma.ppm"));
       pixGreyIntensity = Files.readString(Paths.get("./res/pixGreyIntensity.ppm"));
+      pixVerticalHorizontal = Files.readString(Paths.get("./res/pixVerticalHorizontal.ppm"));
+      pixHorizontalVertical = Files.readString(Paths.get("./res/pixHorizontalVertical.ppm"));
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -202,5 +207,23 @@ public class ImageProcessorModelImplTest {
     model.greyscale("Test", "Test", ImageProcessorModel.GreyscaleMode.Luma);
     assertEquals(model.saveImage("TestOut"), pixGreyLuma);
     assertEquals(model.saveImage("Test"), pixGreyLuma);
+  }
+
+  @Test
+  public void testVerticalHorizontal() {
+    resetModel();
+
+    model.flipVertical("Test", "Test");
+    model.flipHorizontal("Test", "Test");
+    assertEquals(model.saveImage("Test"), pixVerticalHorizontal);
+  }
+
+  @Test
+  public void testHorizontalVertical() {
+    resetModel();
+
+    model.flipHorizontal("Test", "Test");
+    model.flipVertical("Test", "Test");
+    assertEquals(model.saveImage("Test"), pixHorizontalVertical);
   }
 }
