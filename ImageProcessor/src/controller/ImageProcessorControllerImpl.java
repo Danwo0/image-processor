@@ -2,6 +2,7 @@ package controller;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.InputMismatchException;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.function.Function;
@@ -57,9 +58,13 @@ public class ImageProcessorControllerImpl implements ImageProcessorController {
       } else if (cmd == null) {
         writeMessage("Given command is invalid!" + System.lineSeparator());
       } else {
-        c = cmd.apply(sc);
-        c.complete(model);
-        c.feedback(view);
+        try {
+          c = cmd.apply(sc);
+          c.complete(model);
+          c.feedback(view);
+        } catch (InputMismatchException e) {
+          writeMessage("Given invalid arguments for instructions." + System.lineSeparator());
+        }
       }
     }
   }

@@ -58,9 +58,8 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
   public String saveImage(String imageName) throws IllegalArgumentException {
     int[][][] image;
 
-    try {
-      image = images.get(imageName);
-    } catch (NullPointerException e) {
+    image = images.get(imageName);
+    if (image == null) {
       throw new IllegalArgumentException("Image name is invalid");
     }
 
@@ -87,9 +86,8 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
   public void changeBrightness(String in, String out, int amount) throws IllegalArgumentException {
     int[][][] image;
 
-    try {
-      image = images.get(in);
-    } catch (NullPointerException e) {
+    image = images.get(in);
+    if (image == null) {
       throw new IllegalArgumentException("Image name is invalid");
     }
 
@@ -117,9 +115,8 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
   public void flipVertical(String in, String out) throws IllegalArgumentException {
     int[][][] image;
 
-    try {
-      image = images.get(in);
-    } catch (NullPointerException e) {
+    image = images.get(in);
+    if (image == null) {
       throw new IllegalArgumentException("Image name is invalid");
     }
 
@@ -137,9 +134,8 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
   public void flipHorizontal(String in, String out) throws IllegalArgumentException {
     int[][][] image;
 
-    try {
-      image = images.get(in);
-    } catch (NullPointerException e) {
+    image = images.get(in);
+    if (image == null) {
       throw new IllegalArgumentException("Image name is invalid");
     }
 
@@ -159,9 +155,8 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
   public void greyscale(String in, String out, GreyscaleMode mode) throws IllegalArgumentException {
     int[][][] image;
 
-    try {
-      image = images.get(in);
-    } catch (NullPointerException e) {
+    image = images.get(in);
+    if (image == null) {
       throw new IllegalArgumentException("Image name is invalid");
     }
 
