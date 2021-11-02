@@ -138,9 +138,69 @@ public class ImageProcessorModelImplTest {
   public void testHorizontal() {
     resetModel();
 
-    model.changeBrightness("Test", "TestOut", -1);
-    model.changeBrightness("Test", "Test", -1);
+    model.flipHorizontal("Test", "TestOut");
+    model.flipHorizontal("Test", "Test");
     assertEquals(model.saveImage("TestOut"), pixHorizontal);
     assertEquals(model.saveImage("Test"), pixHorizontal);
+  }
+
+  @Test
+  public void testGreyValue() {
+    resetModel();
+
+    model.greyscale("Test", "TestOut", ImageProcessorModel.GreyscaleMode.Value);
+    model.greyscale("Test", "Test", ImageProcessorModel.GreyscaleMode.Value);
+    assertEquals(model.saveImage("TestOut"), pixGreyValue);
+    assertEquals(model.saveImage("Test"), pixGreyValue);
+  }
+
+  @Test
+  public void testGreyR() {
+    resetModel();
+
+    model.greyscale("Test", "TestOut", ImageProcessorModel.GreyscaleMode.ValueR);
+    model.greyscale("Test", "Test", ImageProcessorModel.GreyscaleMode.ValueR);
+    assertEquals(model.saveImage("TestOut"), pixGreyR);
+    assertEquals(model.saveImage("Test"), pixGreyR);
+  }
+
+  @Test
+  public void testGreyG() {
+    resetModel();
+
+    model.greyscale("Test", "TestOut", ImageProcessorModel.GreyscaleMode.ValueG);
+    model.greyscale("Test", "Test", ImageProcessorModel.GreyscaleMode.ValueG);
+    assertEquals(model.saveImage("TestOut"), pixGreyG);
+    assertEquals(model.saveImage("Test"), pixGreyG);
+  }
+
+  @Test
+  public void testGreyB() {
+    resetModel();
+
+    model.greyscale("Test", "TestOut", ImageProcessorModel.GreyscaleMode.ValueB);
+    model.greyscale("Test", "Test", ImageProcessorModel.GreyscaleMode.ValueB);
+    assertEquals(model.saveImage("TestOut"), pixGreyB);
+    assertEquals(model.saveImage("Test"), pixGreyB);
+  }
+
+  @Test
+  public void testGreyIntensity() {
+    resetModel();
+
+    model.greyscale("Test", "TestOut", ImageProcessorModel.GreyscaleMode.Intensity);
+    model.greyscale("Test", "Test", ImageProcessorModel.GreyscaleMode.Intensity);
+    assertEquals(model.saveImage("TestOut"), pixGreyIntensity);
+    assertEquals(model.saveImage("Test"), pixGreyIntensity);
+  }
+
+  @Test
+  public void testGreyLuma() {
+    resetModel();
+
+    model.greyscale("Test", "TestOut", ImageProcessorModel.GreyscaleMode.Luma);
+    model.greyscale("Test", "Test", ImageProcessorModel.GreyscaleMode.Luma);
+    assertEquals(model.saveImage("TestOut"), pixGreyLuma);
+    assertEquals(model.saveImage("Test"), pixGreyLuma);
   }
 }
