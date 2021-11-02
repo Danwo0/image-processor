@@ -3,14 +3,14 @@ package controller.commands;
 import model.ImageProcessorModel;
 
 public class Brighten implements ImageProcessorCommand {
+  int amount;
   String inName;
   String outName;
-  int amount;
 
-  public Brighten(String inName, String outName, int amount) {
+  public Brighten(int amount, String inName, String outName) {
+    this.amount = amount;
     this.inName = inName;
     this.outName = outName;
-    this.amount = amount;
   }
 
   @Override
