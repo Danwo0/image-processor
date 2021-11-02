@@ -2,7 +2,6 @@ package controller;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.InputMismatchException;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.function.Function;
@@ -60,14 +59,9 @@ public class ImageProcessorControllerImpl implements ImageProcessorController {
       } else if (cmd == null) {
         writeMessage("Given command is invalid!" + System.lineSeparator());
       } else {
-        try {
-          c = cmd.apply(sc);
-          c.complete(model);
-          c.feedback(view);
-        } catch (InputMismatchException e) {
-          sc.next();
-          writeMessage("Given invalid arguments for instructions." + System.lineSeparator());
-        }
+        c = cmd.apply(sc);
+        c.complete(model);
+        c.feedback(view);
       }
     }
   }
@@ -77,7 +71,7 @@ public class ImageProcessorControllerImpl implements ImageProcessorController {
     knownCommands.put("save", s -> new Save(sc.next(), sc.next()));
     knownCommands.put("vflip", s -> new FlipVertical(sc.next(), sc.next()));
     knownCommands.put("hflip", s -> new FlipHorizontal(sc.next(), sc.next()));
-    knownCommands.put("brighten", s -> new Brighten(sc.nextInt(), sc.next(), sc.next()));
+    knownCommands.put("brighten", s -> new Brighten(sc.next(), sc.next(), sc.next()));
     knownCommands.put("value-component",
             s -> new Greyscale(sc.next(), sc.next(), GreyscaleMode.Value));
     knownCommands.put("red-component",

@@ -2,8 +2,6 @@ package view;
 
 import java.io.IOException;
 
-import model.ImageProcessorModel;
-
 /**
  * The {@code MarbleSolitaireTextView} class represents a
  * viewer for an Image Processor (not doing anything for this week).
