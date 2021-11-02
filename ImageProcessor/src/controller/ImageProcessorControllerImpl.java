@@ -59,6 +59,7 @@ public class ImageProcessorControllerImpl implements ImageProcessorController {
       } else {
         c = cmd.apply(sc);
         c.complete(model);
+        c.feedback(view);
       }
     }
   }

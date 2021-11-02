@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import model.ImageProcessorModel;
 
-public class Save implements ImageProcessorCommand {
+public class Save extends AbstractCommand {
   String outName;
   String imageName;
 
@@ -20,8 +20,12 @@ public class Save implements ImageProcessorCommand {
       FileWriter imageWriter = new FileWriter(outName);
       imageWriter.write(m.saveImage(imageName));
       imageWriter.close();
-    } catch (IOException e) {
-      throw new IllegalStateException("Writing file failed.");
+      message = "Successfully saved " + imageName + " at "
+              + outName + "." + System.lineSeparator();
+    } catch (IOException e1) {
+      message = "Failed to write to !" + outName + "." + System.lineSeparator();
+    } catch (IllegalArgumentException e2) {
+      message = "Given filename does not exist!" + System.lineSeparator();
     }
   }
 }

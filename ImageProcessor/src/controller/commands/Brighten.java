@@ -2,7 +2,7 @@ package controller.commands;
 
 import model.ImageProcessorModel;
 
-public class Brighten implements ImageProcessorCommand {
+public class Brighten extends AbstractCommand {
   int amount;
   String inName;
   String outName;
@@ -17,8 +17,9 @@ public class Brighten implements ImageProcessorCommand {
   public void complete(ImageProcessorModel m) throws IllegalStateException {
     try {
       m.changeBrightness(inName, outName, amount);
+      message = "Changed brightness of " + inName + " by " + amount + System.lineSeparator();
     } catch (IllegalArgumentException e) {
-      throw new IllegalStateException("Given file does not exist.");
+      message = "Given filename does not exist!" + System.lineSeparator();
     }
   }
 }

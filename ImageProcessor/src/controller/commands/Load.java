@@ -2,7 +2,7 @@ package controller.commands;
 
 import model.ImageProcessorModel;
 
-public class Load implements ImageProcessorCommand {
+public class Load extends AbstractCommand {
   String fileName;
   String imageName;
 
@@ -15,8 +15,10 @@ public class Load implements ImageProcessorCommand {
   public void complete(ImageProcessorModel m) throws IllegalStateException {
     try {
       m.loadImage(fileName, imageName);
+      message = "Successfully loaded " + fileName + " as "
+              + imageName + "." + System.lineSeparator();
     } catch (IllegalArgumentException e) {
-      throw new IllegalStateException("Failed to load file.");
+      message = "Given filename does not exist!" + System.lineSeparator();
     }
   }
 }

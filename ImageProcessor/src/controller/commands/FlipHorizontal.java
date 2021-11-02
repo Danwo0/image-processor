@@ -2,7 +2,7 @@ package controller.commands;
 
 import model.ImageProcessorModel;
 
-public class FlipHorizontal  implements ImageProcessorCommand {
+public class FlipHorizontal extends AbstractCommand {
   String inName;
   String outName;
 
@@ -15,8 +15,9 @@ public class FlipHorizontal  implements ImageProcessorCommand {
   public void complete(ImageProcessorModel m) throws IllegalStateException {
     try {
       m.flipHorizontal(inName, outName);
+      message = "Flipped " + inName + " over the y-axis." + System.lineSeparator();
     } catch (IllegalArgumentException e) {
-      throw new IllegalStateException("Given file does not exist.");
+      message = "Given filename does not exist!" + System.lineSeparator();
     }
   }
 }

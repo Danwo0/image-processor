@@ -3,7 +3,7 @@ package controller.commands;
 import model.ImageProcessorModel;
 import model.ImageProcessorModel.GreyscaleMode;
 
-public class Greyscale implements ImageProcessorCommand {
+public class Greyscale extends AbstractCommand {
   String inName;
   String outName;
   GreyscaleMode mode;
@@ -18,8 +18,9 @@ public class Greyscale implements ImageProcessorCommand {
   public void complete(ImageProcessorModel m) throws IllegalStateException {
     try {
       m.greyscale(inName, outName, mode);
+      message = "Successfully converted " + inName + "." + System.lineSeparator();
     } catch (IllegalArgumentException e) {
-      throw new IllegalStateException("Given file does not exist.");
+      message = "Given filename does not exist!" + System.lineSeparator();
     }
   }
 }

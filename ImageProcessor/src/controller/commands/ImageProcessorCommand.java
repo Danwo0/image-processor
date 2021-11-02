@@ -1,6 +1,7 @@
 package controller.commands;
 
 import model.ImageProcessorModel;
+import view.ImageProcessorView;
 
 public interface ImageProcessorCommand {
 
@@ -11,4 +12,5 @@ public interface ImageProcessorCommand {
    */
   void complete(ImageProcessorModel m) throws IllegalStateException;
 
+  void feedback(ImageProcessorView v) throws IllegalStateException;
 }
