@@ -30,4 +30,6 @@ public class ImageProcessorModelImplTest {
     model.loadImage("pix.ppm", "Test");
     assertEquals(model.saveImage("Test"),actual);
   }
+
+
 }
