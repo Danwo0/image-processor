@@ -10,6 +10,9 @@ import model.ImageProcessorModelImpl;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * This is a set of tests for the ImageProcessorModelImpl.
+ */
 public class ImageProcessorModelImplTest {
 
   private ImageProcessorModel model;
@@ -52,7 +55,7 @@ public class ImageProcessorModelImplTest {
     }
   }
 
-  public void resetModel() {
+  private void resetModel() {
     model = new ImageProcessorModelImpl();
     model.loadImage("./res/pix.ppm", "Test");
   }
