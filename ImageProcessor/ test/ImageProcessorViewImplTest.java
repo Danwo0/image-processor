@@ -9,6 +9,9 @@ import view.ImageProcessorViewImpl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+/**
+ * A set of tests for the view implementation.
+ */
 public class ImageProcessorViewImplTest {
   StringBuilder sb;
   ImageProcessorView view;

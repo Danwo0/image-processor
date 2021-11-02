@@ -1,13 +1,30 @@
 import model.ImageProcessorModel;
 
+/**
+ * This is a mock model for {@code ImageProcessorModel} made for testing purposes.
+ */
 public class ImageProcessorModelMock implements ImageProcessorModel {
   StringBuilder log;
   int mode;
 
+  /**
+   * Constructs a {@code ImageProcessorModelMock} object, works normally by default.
+   *
+   * @param log log to keep track of activities, inputs, and outputs
+   */
   public ImageProcessorModelMock(StringBuilder log) {
     this(log, 0);
   }
 
+  /**
+   * Constructs a {@code ImageProcessorModelMock} object.
+   *
+   * @param log log to keep track of activities, inputs, and outputs
+   * @param mode integer to specify the mock's behavior
+   *             0 will work normally
+   *             1 will always throw the exceptions
+   *             2 is specific to save, will return a set image string back.
+   */
   public ImageProcessorModelMock(StringBuilder log, int mode) {
     this.log = log;
     this.mode = mode;

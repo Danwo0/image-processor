@@ -18,9 +18,11 @@ import view.ImageProcessorViewImpl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+/**
+ * This is a set of test for the controller implementation.
+ */
 public class ImageProcessorControllerImplTest {
 
-  private Appendable output;
   private StringBuilder log;
   private InputStream input;
   private Readable read;
@@ -32,7 +34,7 @@ public class ImageProcessorControllerImplTest {
 
   @Before
   public void setup() {
-    output = new StringBuilder();
+    Appendable output = new StringBuilder();
     log = new StringBuilder();
     input = new ByteArrayInputStream("".getBytes());
     read = new InputStreamReader(input);
@@ -43,11 +45,13 @@ public class ImageProcessorControllerImplTest {
     mockView = new ImageProcessorViewMock(log);
   }
 
+  // sets the inputStream as given string
   private void setInput(String inputString) {
     input = new ByteArrayInputStream(inputString.getBytes());
     read = new InputStreamReader(input);
   }
 
+  // "removes" the menu and farewell message from the log
   private String getBodyLog(StringBuilder log) {
     StringBuilder actualBuilder = new StringBuilder();
     String[] outputArr = log.toString().split(System.lineSeparator());
@@ -395,8 +399,20 @@ public class ImageProcessorControllerImplTest {
   }
 
   @Test
-  public void testBrightenBadArgsFull() {
+  public void testBrightenBadArgs() {
     setInput("brighten a in out q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModelBad, mockView, read);
+    String expected = "View: Rendering message: Did not receive an integer as amount";
+
+    controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  public void testBrightenFloatArgs() {
+    setInput("brighten 10.2 in out q");
     ImageProcessorController controller =
             new ImageProcessorControllerImpl(mockModelBad, mockView, read);
     String expected = "View: Rendering message: Did not receive an integer as amount";

@@ -17,13 +17,25 @@ import model.ImageProcessorModel;
 import model.ImageProcessorModel.GreyscaleMode;
 import view.ImageProcessorView;
 
+/**
+ * The {@code ImageProcessorControllerImpl} class is an implementation of the
+ * {@code ImageProcessorController} interface, responsible with getting user input
+ * and delegating necessary information to the model and view.
+ */
 public class ImageProcessorControllerImpl implements ImageProcessorController {
-  private final Readable read;
   private final ImageProcessorModel model;
   private final ImageProcessorView view;
   private final Map<String, Function<Scanner, ImageProcessorCommand>> knownCommands;
   private final Scanner sc;
 
+  /**
+   * Constructs a {@code ImageProcessorControllerImpl} object.
+   *
+   * @param model the model
+   * @param view  the view
+   * @param read  the source of input
+   * @throws IllegalArgumentException if given null for any of its fields
+   */
   public ImageProcessorControllerImpl(ImageProcessorModel model,
                                       ImageProcessorView view, Readable read)
           throws IllegalArgumentException {
@@ -33,9 +45,8 @@ public class ImageProcessorControllerImpl implements ImageProcessorController {
 
     this.model = model;
     this.view = view;
-    this.read = read;
 
-    this.sc = new Scanner(this.read);
+    this.sc = new Scanner(read);
     this.knownCommands = new HashMap<>();
     addCommands();
   }
@@ -66,6 +77,7 @@ public class ImageProcessorControllerImpl implements ImageProcessorController {
     }
   }
 
+  //Adds all known commands to the knownCommands map.
   private void addCommands() {
     knownCommands.put("load", s -> new Load(sc.next(), sc.next()));
     knownCommands.put("save", s -> new Save(sc.next(), sc.next()));
@@ -73,17 +85,22 @@ public class ImageProcessorControllerImpl implements ImageProcessorController {
     knownCommands.put("hflip", s -> new FlipHorizontal(sc.next(), sc.next()));
     knownCommands.put("brighten", s -> new Brighten(sc.next(), sc.next(), sc.next()));
     knownCommands.put("value-component",
-            s -> new Greyscale(sc.next(), sc.next(), GreyscaleMode.Value));
+        s -> new Greyscale(sc.next(), sc.next(), GreyscaleMode.Value));
     knownCommands.put("red-component",
-            s -> new Greyscale(sc.next(), sc.next(), GreyscaleMode.ValueR));
+        s -> new Greyscale(sc.next(), sc.next(), GreyscaleMode.ValueR));
     knownCommands.put("green-component",
-            s -> new Greyscale(sc.next(), sc.next(), GreyscaleMode.ValueG));
+        s -> new Greyscale(sc.next(), sc.next(), GreyscaleMode.ValueG));
     knownCommands.put("blue-component",
-            s -> new Greyscale(sc.next(), sc.next(), GreyscaleMode.ValueB));
-    knownCommands.put("intensity", s -> new Greyscale(sc.next(), sc.next(), GreyscaleMode.Intensity));
+        s -> new Greyscale(sc.next(), sc.next(), GreyscaleMode.ValueB));
+    knownCommands.put("intensity",
+        s -> new Greyscale(sc.next(), sc.next(), GreyscaleMode.Intensity));
     knownCommands.put("luma", s -> new Greyscale(sc.next(), sc.next(), GreyscaleMode.Luma));
   }
 
+  /*
+    Sends a message to view to be rendered.
+    throws IllegalStateException if failed to communicate with the view.
+   */
   private void writeMessage(String message) throws IllegalStateException {
     try {
       this.view.renderMessage(message);
@@ -92,6 +109,7 @@ public class ImageProcessorControllerImpl implements ImageProcessorController {
     }
   }
 
+  // renders a list of preset messages for the list of available operations - a menu.
   private void printMenu() throws IllegalStateException {
     writeMessage("Supported instructions are:" + System.lineSeparator());
     writeMessage("load image-path image-name (loads the image)" + System.lineSeparator());
@@ -118,12 +136,14 @@ public class ImageProcessorControllerImpl implements ImageProcessorController {
     writeMessage("q or quit (quits the processor)" + System.lineSeparator());
   }
 
+  // renders a message to welcome the user
   private void welcomeMessage() throws IllegalStateException {
     writeMessage("Welcome! Below are the supported instructions. Operations can be done through "
             + "referring to the images by the given name while loading." + System.lineSeparator());
     printMenu();
   }
 
+  // renders a message for ending the program.
   private void endingMessage() throws IllegalStateException {
     writeMessage("Thank you for using this program!");
   }

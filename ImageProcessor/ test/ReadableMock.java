@@ -1,6 +1,9 @@
 import java.io.IOException;
 import java.nio.CharBuffer;
 
+/**
+ * This is a mock Readable that always throws IOException for all methods for testing purposes.
+ */
 public class ReadableMock implements Readable {
 
   @Override
