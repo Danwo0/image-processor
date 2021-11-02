@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class ImageProcessorModelImpl implements ImageProcessorModel {
-  private Map<String, int[][][]> images;
-  private Map<String, Integer> maxValue;
+  private final Map<String, int[][][]> images;
+  private final Map<String, Integer> maxValue;
 
   public ImageProcessorModelImpl() throws IllegalArgumentException {
     this.images = new HashMap<>();
@@ -98,7 +98,7 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
         for (int k = 0; k < image[i][j].length; k++) {
           int value = image[i][j][k];
           if (amount > 0 && value + amount > maxValue.get(in)) {
-            output[i][j][k] = 255;
+            output[i][j][k] = maxValue.get(in);
           } else if (amount < 0 && value + amount < 0) {
             output[i][j][k] = 0;
           } else {
