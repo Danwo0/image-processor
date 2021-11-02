@@ -2,8 +2,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import controller.ImageProcessorController;
 import controller.ImageProcessorControllerImpl;
@@ -13,6 +16,7 @@ import view.ImageProcessorView;
 import view.ImageProcessorViewImpl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class ImageProcessorControllerImplTest {
 
@@ -22,6 +26,7 @@ public class ImageProcessorControllerImplTest {
   private Readable read;
   private ImageProcessorModel model;
   private ImageProcessorModel mockModel;
+  private ImageProcessorModel mockModelBad;
   private ImageProcessorView view;
   private ImageProcessorView mockView;
 
@@ -33,6 +38,7 @@ public class ImageProcessorControllerImplTest {
     read = new InputStreamReader(input);
     model = new ImageProcessorModelImpl();
     mockModel = new ImageProcessorModelMock(log);
+    mockModelBad = new ImageProcessorModelMock(log, 1);
     view = new ImageProcessorViewImpl(model, output);
     mockView = new ImageProcessorViewMock(log);
   }
@@ -40,6 +46,16 @@ public class ImageProcessorControllerImplTest {
   private void setInput(String inputString) {
     input = new ByteArrayInputStream(inputString.getBytes());
     read = new InputStreamReader(input);
+  }
+
+  private String getBodyLog(StringBuilder log) {
+    StringBuilder actualBuilder = new StringBuilder();
+    String[] outputArr = log.toString().split(System.lineSeparator());
+    actualBuilder.append(outputArr[15]);
+    for (int i = 16; i < outputArr.length - 1; i++) {
+      actualBuilder.append("\n").append(outputArr[i]);
+    }
+    return actualBuilder.toString();
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -107,7 +123,8 @@ public class ImageProcessorControllerImplTest {
             "View: Rendering message: luma image-name dest-image-name " +
             "(greyscale the image by luma value)\n" +
             "View: Rendering message: menu (shows all the available supported instructions)\n" +
-            "View: Rendering message: q or quit (quits the processor)";
+            "View: Rendering message: q or quit (quits the processor)\n" +
+            "View: Rendering message: Thank you for using this program!";
     controller.startProcessor();
 
     StringBuilder actualBuilder = new StringBuilder();
@@ -116,6 +133,23 @@ public class ImageProcessorControllerImplTest {
     for (int i = 1; i < outputArr.length; i++) {
       actualBuilder.append("\n").append(outputArr[i]);
     }
+    String actual = actualBuilder.toString();
+
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  public void testEndMessage() {
+    setInput("q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModel, mockView, read);
+    String expected = "View: Rendering message: Thank you for using this program!";
+
+    controller.startProcessor();
+
+    StringBuilder actualBuilder = new StringBuilder();
+    String[] outputArr = log.toString().split(System.lineSeparator());
+    actualBuilder.append(outputArr[15]);
     String actual = actualBuilder.toString();
 
     assertEquals(expected, actual);
@@ -155,11 +189,50 @@ public class ImageProcessorControllerImplTest {
     StringBuilder actualBuilder = new StringBuilder();
     String[] outputArr = log.toString().split(System.lineSeparator());
     actualBuilder.append(outputArr[15]);
-    for (int i = 16; i < outputArr.length; i++) {
+    for (int i = 16; i < outputArr.length - 1; i++) {
       actualBuilder.append("\n").append(outputArr[i]);
     }
     String actual = actualBuilder.toString();
 
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  public void testInvalidCommand() {
+    setInput("invalid q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModel, mockView, read);
+    String expected = "View: Rendering message: Given command is invalid!";
+
+    controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  public void testTwoInvalidCommand() {
+    setInput("invalid1 invalid2 q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModel, mockView, read);
+    String expected = "View: Rendering message: Given command is invalid!\n" +
+            "View: Rendering message: Given command is invalid!";
+
+    controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  public void testThreeInvalidCommand() {
+    setInput("invalid1 invalid2 invalid3 q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModel, mockView, read);
+    String expected = "View: Rendering message: Given command is invalid!\n" +
+            "View: Rendering message: Given command is invalid!\n" +
+            "View: Rendering message: Given command is invalid!";
+
+    controller.startProcessor();
+    String actual = getBodyLog(log);
     assertEquals(expected, actual);
   }
 
@@ -172,15 +245,20 @@ public class ImageProcessorControllerImplTest {
             "View: Rendering message: Successfully loaded image.ppm as name.";
 
     controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+  }
 
-    StringBuilder actualBuilder = new StringBuilder();
-    String[] outputArr = log.toString().split(System.lineSeparator());
-    actualBuilder.append(outputArr[15]);
-    for (int i = 16; i < outputArr.length; i++) {
-      actualBuilder.append("\n").append(outputArr[i]);
-    }
-    String actual = actualBuilder.toString();
+  @Test
+  public void testLoadNoImage() {
+    setInput("load badName name q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModelBad, mockView, read);
+    String expected = "Model: Failed to find badName\n" +
+            "View: Rendering message: Given filename does not exist!";
 
+    controller.startProcessor();
+    String actual = getBodyLog(log);
     assertEquals(expected, actual);
   }
 
@@ -193,15 +271,20 @@ public class ImageProcessorControllerImplTest {
             "View: Rendering message: Successfully saved name at output.ppm.";
 
     controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+  }
 
-    StringBuilder actualBuilder = new StringBuilder();
-    String[] outputArr = log.toString().split(System.lineSeparator());
-    actualBuilder.append(outputArr[15]);
-    for (int i = 16; i < outputArr.length; i++) {
-      actualBuilder.append("\n").append(outputArr[i]);
-    }
-    String actual = actualBuilder.toString();
+  @Test
+  public void testSaveNoImage() {
+    setInput("save output.ppm badName q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModelBad, mockView, read);
+    String expected = "Model: badName does not exist.\n" +
+            "View: Rendering message: Given filename does not exist!";
 
+    controller.startProcessor();
+    String actual = getBodyLog(log);
     assertEquals(expected, actual);
   }
 
@@ -214,15 +297,20 @@ public class ImageProcessorControllerImplTest {
             "View: Rendering message: Flipped in over the x-axis.";
 
     controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+  }
 
-    StringBuilder actualBuilder = new StringBuilder();
-    String[] outputArr = log.toString().split(System.lineSeparator());
-    actualBuilder.append(outputArr[15]);
-    for (int i = 16; i < outputArr.length; i++) {
-      actualBuilder.append("\n").append(outputArr[i]);
-    }
-    String actual = actualBuilder.toString();
+  @Test
+  public void testVflipNoImage() {
+    setInput("vflip in out q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModelBad, mockView, read);
+    String expected = "Model: in does not exist.\n" +
+            "View: Rendering message: Given filename does not exist!";
 
+    controller.startProcessor();
+    String actual = getBodyLog(log);
     assertEquals(expected, actual);
   }
 
@@ -235,15 +323,20 @@ public class ImageProcessorControllerImplTest {
             "View: Rendering message: Flipped in over the y-axis.";
 
     controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+  }
 
-    StringBuilder actualBuilder = new StringBuilder();
-    String[] outputArr = log.toString().split(System.lineSeparator());
-    actualBuilder.append(outputArr[15]);
-    for (int i = 16; i < outputArr.length; i++) {
-      actualBuilder.append("\n").append(outputArr[i]);
-    }
-    String actual = actualBuilder.toString();
+  @Test
+  public void testhflipNoImage() {
+    setInput("hflip in out q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModelBad, mockView, read);
+    String expected = "Model: in does not exist.\n" +
+            "View: Rendering message: Given filename does not exist!";
 
+    controller.startProcessor();
+    String actual = getBodyLog(log);
     assertEquals(expected, actual);
   }
 
@@ -256,15 +349,46 @@ public class ImageProcessorControllerImplTest {
             "View: Rendering message: Changed brightness of in by 40";
 
     controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+  }
 
-    StringBuilder actualBuilder = new StringBuilder();
-    String[] outputArr = log.toString().split(System.lineSeparator());
-    actualBuilder.append(outputArr[15]);
-    for (int i = 16; i < outputArr.length; i++) {
-      actualBuilder.append("\n").append(outputArr[i]);
-    }
-    String actual = actualBuilder.toString();
+  @Test
+  public void testBrightenNoImage() {
+    setInput("brighten 40 in out q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModelBad, mockView, read);
+    String expected = "Model: in does not exist.\n" +
+            "View: Rendering message: Given filename does not exist!";
 
+    controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  public void testBrightenBadArgs() {
+    setInput("brighten a q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModelBad, mockView, read);
+    String expected = "View: Rendering message: Given invalid arguments for instructions.";
+
+    controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  public void testBrightenBadArgsFull() {
+    setInput("brighten a in out q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModelBad, mockView, read);
+    String expected = "View: Rendering message: Given invalid arguments for instructions.\n" +
+            "View: Rendering message: Given command is invalid!\n" +
+            "View: Rendering message: Given command is invalid!";
+
+    controller.startProcessor();
+    String actual = getBodyLog(log);
     assertEquals(expected, actual);
   }
 
@@ -277,15 +401,20 @@ public class ImageProcessorControllerImplTest {
             "View: Rendering message: Successfully converted in.";
 
     controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+  }
 
-    StringBuilder actualBuilder = new StringBuilder();
-    String[] outputArr = log.toString().split(System.lineSeparator());
-    actualBuilder.append(outputArr[15]);
-    for (int i = 16; i < outputArr.length; i++) {
-      actualBuilder.append("\n").append(outputArr[i]);
-    }
-    String actual = actualBuilder.toString();
+  @Test
+  public void testValComponentNoImage() {
+    setInput("value-component in out q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModelBad, mockView, read);
+    String expected = "Model: in does not exist.\n" +
+            "View: Rendering message: Given filename does not exist!";
 
+    controller.startProcessor();
+    String actual = getBodyLog(log);
     assertEquals(expected, actual);
   }
 
@@ -298,15 +427,20 @@ public class ImageProcessorControllerImplTest {
             "View: Rendering message: Successfully converted in.";
 
     controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+  }
 
-    StringBuilder actualBuilder = new StringBuilder();
-    String[] outputArr = log.toString().split(System.lineSeparator());
-    actualBuilder.append(outputArr[15]);
-    for (int i = 16; i < outputArr.length; i++) {
-      actualBuilder.append("\n").append(outputArr[i]);
-    }
-    String actual = actualBuilder.toString();
+  @Test
+  public void testRedComponentNoImage() {
+    setInput("red-component in out q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModelBad, mockView, read);
+    String expected = "Model: in does not exist.\n" +
+            "View: Rendering message: Given filename does not exist!";
 
+    controller.startProcessor();
+    String actual = getBodyLog(log);
     assertEquals(expected, actual);
   }
 
@@ -319,15 +453,20 @@ public class ImageProcessorControllerImplTest {
             "View: Rendering message: Successfully converted in.";
 
     controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+  }
 
-    StringBuilder actualBuilder = new StringBuilder();
-    String[] outputArr = log.toString().split(System.lineSeparator());
-    actualBuilder.append(outputArr[15]);
-    for (int i = 16; i < outputArr.length; i++) {
-      actualBuilder.append("\n").append(outputArr[i]);
-    }
-    String actual = actualBuilder.toString();
+  @Test
+  public void testGreenComponentNoImage() {
+    setInput("green-component in out q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModelBad, mockView, read);
+    String expected = "Model: in does not exist.\n" +
+            "View: Rendering message: Given filename does not exist!";
 
+    controller.startProcessor();
+    String actual = getBodyLog(log);
     assertEquals(expected, actual);
   }
 
@@ -340,15 +479,20 @@ public class ImageProcessorControllerImplTest {
             "View: Rendering message: Successfully converted in.";
 
     controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+  }
 
-    StringBuilder actualBuilder = new StringBuilder();
-    String[] outputArr = log.toString().split(System.lineSeparator());
-    actualBuilder.append(outputArr[15]);
-    for (int i = 16; i < outputArr.length; i++) {
-      actualBuilder.append("\n").append(outputArr[i]);
-    }
-    String actual = actualBuilder.toString();
+  @Test
+  public void testBlueComponentNoImage() {
+    setInput("blue-component in out q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModelBad, mockView, read);
+    String expected = "Model: in does not exist.\n" +
+            "View: Rendering message: Given filename does not exist!";
 
+    controller.startProcessor();
+    String actual = getBodyLog(log);
     assertEquals(expected, actual);
   }
 
@@ -361,15 +505,20 @@ public class ImageProcessorControllerImplTest {
             "View: Rendering message: Successfully converted in.";
 
     controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+  }
 
-    StringBuilder actualBuilder = new StringBuilder();
-    String[] outputArr = log.toString().split(System.lineSeparator());
-    actualBuilder.append(outputArr[15]);
-    for (int i = 16; i < outputArr.length; i++) {
-      actualBuilder.append("\n").append(outputArr[i]);
-    }
-    String actual = actualBuilder.toString();
+  @Test
+  public void testIntensityNoImage() {
+    setInput("intensity in out q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModelBad, mockView, read);
+    String expected = "Model: in does not exist.\n" +
+            "View: Rendering message: Given filename does not exist!";
 
+    controller.startProcessor();
+    String actual = getBodyLog(log);
     assertEquals(expected, actual);
   }
 
@@ -382,15 +531,20 @@ public class ImageProcessorControllerImplTest {
             "View: Rendering message: Successfully converted in.";
 
     controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+  }
 
-    StringBuilder actualBuilder = new StringBuilder();
-    String[] outputArr = log.toString().split(System.lineSeparator());
-    actualBuilder.append(outputArr[15]);
-    for (int i = 16; i < outputArr.length; i++) {
-      actualBuilder.append("\n").append(outputArr[i]);
-    }
-    String actual = actualBuilder.toString();
+  @Test
+  public void testLumaNoImage() {
+    setInput("luma in out q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModelBad, mockView, read);
+    String expected = "Model: in does not exist.\n" +
+            "View: Rendering message: Given filename does not exist!";
 
+    controller.startProcessor();
+    String actual = getBodyLog(log);
     assertEquals(expected, actual);
   }
 
@@ -400,19 +554,58 @@ public class ImageProcessorControllerImplTest {
     ImageProcessorModel saveMock = new ImageProcessorModelMock(log, 2);
     ImageProcessorController controller =
             new ImageProcessorControllerImpl(saveMock, mockView, read);
-    String expected = "Model: Greyscale: in by Luma; saved as: out\n" +
-            "View: Rendering message: Successfully converted in.";
+    String expected = "Model: Saving a set 2x2 image\n" +
+            "View: Rendering message: Successfully saved name at res/controllerSaveTest.ppm.";
 
     controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
 
+    String expectedImage = "P3\n2 2\n255\n60\n60\n60\n120\n120\n120\n180\n180\n180\n240\n240\n240";
+    String actualImage = "";
+    try {
+      actualImage = Files.readString(Paths.get("res/controllerSaveTest.ppm"));
+    } catch (IOException e) {
+      fail();
+    }
+    assertEquals(expectedImage, actualImage);
+  }
+
+  @Test
+  public void testBadReadable() {
+    setInput("load image.ppm name");
+    Readable badRead = new ReadableMock();
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModel, mockView, badRead);
+    String expected = "";
+
+    controller.startProcessor();
     StringBuilder actualBuilder = new StringBuilder();
     String[] outputArr = log.toString().split(System.lineSeparator());
-    actualBuilder.append(outputArr[15]);
-    for (int i = 16; i < outputArr.length; i++) {
+    for (int i = 15; i < outputArr.length - 1; i++) {
       actualBuilder.append("\n").append(outputArr[i]);
     }
     String actual = actualBuilder.toString();
 
     assertEquals(expected, actual);
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testRenderMessageFail() {
+    setInput("luma in out q");
+    ImageProcessorView failView = new ImageProcessorViewMock(log, 1);
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(model, failView, read);
+    controller.startProcessor();
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testBadAppendable() {
+    setInput("luma in out q");
+    Appendable badAppendable = new AppendableMock();
+    view = new ImageProcessorViewImpl(model, badAppendable);
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(model, view, read);
+    controller.startProcessor();
   }
 }

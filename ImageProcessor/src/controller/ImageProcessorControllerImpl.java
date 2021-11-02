@@ -48,8 +48,10 @@ public class ImageProcessorControllerImpl implements ImageProcessorController {
       ImageProcessorCommand c;
       String in = sc.next();
 
-      if (in.equalsIgnoreCase("q") || in.equalsIgnoreCase("quit"))
+      if (in.equalsIgnoreCase("q") || in.equalsIgnoreCase("quit")) {
+        endingMessage();
         return;
+      }
 
       Function<Scanner, ImageProcessorCommand> cmd = knownCommands.getOrDefault(in, null);
 
@@ -63,6 +65,7 @@ public class ImageProcessorControllerImpl implements ImageProcessorController {
           c.complete(model);
           c.feedback(view);
         } catch (InputMismatchException e) {
+          sc.next();
           writeMessage("Given invalid arguments for instructions." + System.lineSeparator());
         }
       }
@@ -125,6 +128,10 @@ public class ImageProcessorControllerImpl implements ImageProcessorController {
     writeMessage("Welcome! Below are the supported instructions. Operations can be done through "
             + "referring to the images by the given name while loading." + System.lineSeparator());
     printMenu();
+  }
+
+  private void endingMessage() throws IllegalStateException {
+    writeMessage("Thank you for using this program!");
   }
 
 }
