@@ -19,11 +19,11 @@ import model.ImageProcessorModel.GreyscaleMode;
 import view.ImageProcessorView;
 
 public class ImageProcessorControllerImpl implements ImageProcessorController {
-  Readable read;
-  ImageProcessorModel model;
-  ImageProcessorView view;
-  Map<String, Function<Scanner, ImageProcessorCommand>> knownCommands;
-  Scanner sc;
+  private final Readable read;
+  private final ImageProcessorModel model;
+  private final ImageProcessorView view;
+  private final Map<String, Function<Scanner, ImageProcessorCommand>> knownCommands;
+  private final Scanner sc;
 
   public ImageProcessorControllerImpl(ImageProcessorModel model,
                                       ImageProcessorView view, Readable read)
@@ -36,7 +36,7 @@ public class ImageProcessorControllerImpl implements ImageProcessorController {
     this.view = view;
     this.read = read;
 
-    this.sc = new Scanner(read);
+    this.sc = new Scanner(this.read);
     this.knownCommands = new HashMap<>();
     addCommands();
   }
@@ -105,7 +105,7 @@ public class ImageProcessorControllerImpl implements ImageProcessorController {
             + System.lineSeparator());
     writeMessage("brighten increment image-name dest-image-name "
             + "(brightens the image by the given amount)" + System.lineSeparator());
-    writeMessage("value-component image-name dest-image-name"
+    writeMessage("value-component image-name dest-image-name "
             + "(greyscale the image by the highest value)" + System.lineSeparator());
     writeMessage("red-component image-name dest-image-name (greyscale the image by the R value)"
             + System.lineSeparator());
