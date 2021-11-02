@@ -22,24 +22,24 @@ public class ImageProcessorModelImplTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void loadNonPPM() {
-    model.loadImage("ImageProcessor/res/P2.ppm", "haha");
+    model.loadImage("./res/P2.ppm", "haha");
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void load404() {
-    model.loadImage("ImageProcessor/res/ThisFileDoesnt.Exist", "haha");
+    model.loadImage("./res/ThisFileDoesnt.Exist", "haha");
   }
 
   @Test
   public void testLoad() {
     String actual = "";
     try {
-      actual = Files.readString(Paths.get("ImageProcessor/res/pix.ppm"));
+      actual = Files.readString(Paths.get("./res/pix.ppm"));
     } catch (IOException e) {
       e.printStackTrace();
     }
 
-    model.loadImage("ImageProcessor/res/pix.ppm", "Test");
+    model.loadImage("./res/pix.ppm", "Test");
     assertEquals(model.saveImage("Test"), actual);
   }
 
