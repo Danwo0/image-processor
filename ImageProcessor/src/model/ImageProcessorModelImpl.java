@@ -10,7 +10,10 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
   private final Map<String, int[][][]> images;
   private final Map<String, Integer> maxValue;
 
-  public ImageProcessorModelImpl() throws IllegalArgumentException {
+  /**
+   * This creates an instance of ImageProcessorModelImpl, with an empty list of images.
+   */
+  public ImageProcessorModelImpl(){
     this.images = new HashMap<>();
     this.maxValue = new HashMap<>();
   }
