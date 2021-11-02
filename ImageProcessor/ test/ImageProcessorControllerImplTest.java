@@ -39,7 +39,7 @@ public class ImageProcessorControllerImplTest {
     model = new ImageProcessorModelImpl();
     mockModel = new ImageProcessorModelMock(log);
     mockModelBad = new ImageProcessorModelMock(log, 1);
-    view = new ImageProcessorViewImpl(model, output);
+    view = new ImageProcessorViewImpl(output);
     mockView = new ImageProcessorViewMock(log);
   }
 
@@ -603,7 +603,7 @@ public class ImageProcessorControllerImplTest {
   public void testBadAppendable() {
     setInput("luma in out q");
     Appendable badAppendable = new AppendableMock();
-    view = new ImageProcessorViewImpl(model, badAppendable);
+    view = new ImageProcessorViewImpl(badAppendable);
     ImageProcessorController controller =
             new ImageProcessorControllerImpl(model, view, read);
     controller.startProcessor();

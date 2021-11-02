@@ -10,28 +10,25 @@ import model.ImageProcessorModel;
  */
 public class ImageProcessorViewImpl implements ImageProcessorView {
 
-  private final ImageProcessorModel model;
   private final Appendable destination;
 
-  public ImageProcessorViewImpl(ImageProcessorModel model)
+  public ImageProcessorViewImpl()
           throws IllegalArgumentException {
-    this(model, System.out);
+    this(System.out);
   }
 
   /**
    * Constructs a {@code ImageProcessorViewImpl} object.
    *
-   * @param model       a ImageProcessorModel object
    * @param destination output location
    * @throws IllegalArgumentException if given null as model or destinuation
    */
-  public ImageProcessorViewImpl(ImageProcessorModel model, Appendable destination)
+  public ImageProcessorViewImpl(Appendable destination)
           throws IllegalArgumentException {
-    if (model == null || destination == null) {
+    if (destination == null) {
       throw new IllegalArgumentException("Given null in view");
     }
 
-    this.model = model;
     this.destination = destination;
   }
 

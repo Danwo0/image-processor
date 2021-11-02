@@ -11,7 +11,7 @@ public class ImageProcessor {
 
   public static void main(String[] args) {
     ImageProcessorModel model = new ImageProcessorModelImpl();
-    ImageProcessorView view = new ImageProcessorViewImpl(model);
+    ImageProcessorView view = new ImageProcessorViewImpl();
     ImageProcessorController controller =
             new ImageProcessorControllerImpl(model, view, new InputStreamReader(System.in));
 

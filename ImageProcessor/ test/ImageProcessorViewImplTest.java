@@ -3,8 +3,6 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import model.ImageProcessorModel;
-import model.ImageProcessorModelImpl;
 import view.ImageProcessorView;
 import view.ImageProcessorViewImpl;
 
@@ -13,14 +11,12 @@ import static org.junit.Assert.fail;
 
 public class ImageProcessorViewImplTest {
   StringBuilder sb;
-  ImageProcessorModel model;
   ImageProcessorView view;
 
   @Before
   public void setup() {
     sb = new StringBuilder();
-    model = new ImageProcessorModelImpl();
-    view = new ImageProcessorViewImpl(model, sb);
+    view = new ImageProcessorViewImpl(sb);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -28,25 +24,11 @@ public class ImageProcessorViewImplTest {
     new ImageProcessorViewImpl(null);
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void testNullModel() {
-    new ImageProcessorViewImpl(null, sb);
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void testNullDestination() {
-    new ImageProcessorViewImpl(model, null);
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void testNullAll() {
-    new ImageProcessorViewImpl(null, null);
-  }
 
   @Test(expected = IOException.class)
   public void testFailRenderMessage() throws IOException {
     Appendable badDestination = new AppendableMock();
-    view = new ImageProcessorViewImpl(model, badDestination);
+    view = new ImageProcessorViewImpl(badDestination);
     view.renderMessage("fail!");
   }
 
