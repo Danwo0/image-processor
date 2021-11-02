@@ -94,10 +94,32 @@ public class ImageProcessorModelImplTest {
     model = new ImageProcessorModelImpl();
     String pix = "";
     try {
-      pix = Files.readString(Paths.get("./res/pix.ppm"));
+      pix = Files.readString(Paths.get("./res/pixBrighter.ppm"));
     } catch (IOException e) {
       e.printStackTrace();
     }
 
+    model.loadImage("./res/pix.ppm", "Test");
+    model.changeBrightness("Test", "TestOut", 1);
+    model.changeBrightness("Test", "Test", 1);
+    assertEquals(model.saveImage("TestOut"), pix);
+    assertEquals(model.saveImage("Test"), pix);
+  }
+
+  @Test
+  public void testDarken() {
+    model = new ImageProcessorModelImpl();
+    String pix = "";
+    try {
+      pix = Files.readString(Paths.get("./res/pixDarker.ppm"));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    model.loadImage("./res/pix.ppm", "Test");
+    model.changeBrightness("Test", "TestOut", -1);
+    model.changeBrightness("Test", "Test", -1);
+    assertEquals(model.saveImage("TestOut"), pix);
+    assertEquals(model.saveImage("Test"), pix);
   }
 }
