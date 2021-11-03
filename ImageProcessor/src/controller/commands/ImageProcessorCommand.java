@@ -16,7 +16,7 @@ public interface ImageProcessorCommand {
   void complete(ImageProcessorModel m) throws IllegalStateException;
 
   /**
-   * Send a message based on the output of the operation
+   * Send a message based on the output of the operation.
    * @param v the view to render this message on.
    * @throws IllegalStateException if failed to render message.
    */

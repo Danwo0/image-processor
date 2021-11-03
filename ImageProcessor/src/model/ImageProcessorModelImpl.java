@@ -6,6 +6,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
+/**
+ * The {@code ImageProcessorModelImpl} class is an implementation of the
+ * {@code ImageProcessorModel} interface, responsible containing all the necessary data
+ * and the operations for processing the image.
+ */
 public class ImageProcessorModelImpl implements ImageProcessorModel {
   private final Map<String, int[][][]> images;
   private final Map<String, Integer> maxValue;
@@ -13,7 +18,7 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
   /**
    * This creates an instance of ImageProcessorModelImpl, with an empty list of images.
    */
-  public ImageProcessorModelImpl(){
+  public ImageProcessorModelImpl() {
     this.images = new HashMap<>();
     this.maxValue = new HashMap<>();
   }
