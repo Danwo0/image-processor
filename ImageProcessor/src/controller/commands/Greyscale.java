@@ -7,9 +7,9 @@ import model.ImageProcessorModel.GreyscaleMode;
  * The {@code Greyscale} class represents the operation of the greyscale commands from controller.
  */
 public class Greyscale extends AbstractCommand {
-  String inName;
-  String outName;
-  GreyscaleMode mode;
+  private final String inName;
+  private final String outName;
+  private final GreyscaleMode mode;
 
   /**
    * Constructs the {@code Greyscale} object.

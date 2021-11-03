@@ -6,8 +6,8 @@ import model.ImageProcessorModel;
  * The {@code Brighten} class represents the operation of the brighten command from controller.
  */
 public class Load extends AbstractCommand {
-  String fileName;
-  String imageName;
+  private final String fileName;
+  private final String imageName;
 
   /**
    * Constructs the {@code Load} object.

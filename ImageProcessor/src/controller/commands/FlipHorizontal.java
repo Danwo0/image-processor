@@ -7,8 +7,8 @@ import model.ImageProcessorModel;
  * of the flip horizontal command from controller.
  */
 public class FlipHorizontal extends AbstractCommand {
-  String inName;
-  String outName;
+  private final String inName;
+  private final String outName;
 
   /**
    * Constructs the {@code FlipHorizontal} object.
