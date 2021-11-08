@@ -15,7 +15,14 @@ public interface ImageProcessorModel {
    */
   void loadImage(String fileName, String imageName) throws IllegalArgumentException;
 
-  String saveImage(String imageName) throws IllegalArgumentException;
+  /**
+   * Saves the given image from the model.
+   *
+   * @param fileName  the name of the file to save
+   * @param imageName the name to refer to saved image
+   * @throws IllegalArgumentException if fails saving
+   */
+  void saveImage(String fileName, String imageName) throws IllegalStateException, IllegalArgumentException;
 
   /**
    * Change the brightness of the image by the given amount.
