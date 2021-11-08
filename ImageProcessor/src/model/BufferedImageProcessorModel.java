@@ -2,13 +2,8 @@ package model;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.imageio.ImageIO;
 
 public class BufferedImageProcessorModel implements ImageProcessorModel {
   Map<String, BufferedImage> images;
@@ -18,27 +13,71 @@ public class BufferedImageProcessorModel implements ImageProcessorModel {
   }
 
   @Override
-  public void loadImage(String fileName, String imageName) throws IllegalArgumentException {
-    BufferedImage loadedImage;
-
-    try {
-      loadedImage = ImageIO.read(new FileInputStream(fileName));
-    } catch (IOException e) {
-      throw new IllegalArgumentException(e.getMessage());
+  public void loadImage(BufferedImage image, String imageName) throws IllegalArgumentException {
+    if (image == null) {
+      throw new IllegalArgumentException("Given image is null");
     }
-
-    images.put(imageName, loadedImage);
+    images.put(imageName, image);
   }
 
   @Override
-  public void saveImage(String fileName, String imageName) throws IllegalArgumentException {
-    String format = fileName.substring(fileName.lastIndexOf(".") + 1);
+  public BufferedImage saveImage(String imageName) throws IllegalArgumentException {
     try {
-      if (!ImageIO.write(images.get(imageName), format, new File(fileName))) {
-        throw new IllegalArgumentException("Write failed");
-      }
-    } catch (IOException e) {
+      return images.get(imageName);
+    } catch (NullPointerException e) {
       throw new IllegalArgumentException(e.getMessage());
+    }
+  }
+
+  @Override
+  public void loadPPM(String image, String imageName) throws IllegalArgumentException {
+    String[] image_array = image.split(System.lineSeparator());
+    BufferedImage output;
+
+    if (!image_array[0].equals("P3")) {
+      int i = 0;
+      while (image_array[i].startsWith("#")) {
+        i++;
+      }
+
+      String[] dim = image_array[i++].split(" ");
+      output = new BufferedImage(Integer.parseInt(dim[0]),
+              Integer.parseInt(dim[1]), BufferedImage.TYPE_INT_RGB);
+
+      for (int j = output.getMinX(); j < output.getWidth(); j++) {
+        for (int k = output.getMinY(); k < output.getHeight(); k++) {
+          try {
+            output.setRGB(i, j, new Color(Integer.parseInt(image_array[i++]),
+                    Integer.parseInt(image_array[i++]), Integer.parseInt(image_array[i++])).getRGB());
+          } catch (NullPointerException e){
+            throw new IllegalArgumentException(e.getMessage());
+          }
+        }
+      }
+    }
+  }
+
+  @Override
+  public String savePPM(String imageName) throws IllegalArgumentException {
+    BufferedImage image = images.get(imageName);
+    if (image == null) {
+      throw new IllegalArgumentException("Image name is invalid");
+    }
+
+    StringBuilder output = new StringBuilder("P3" + System.lineSeparator());
+    output.append("# Created by us").append(System.lineSeparator());
+    output.append(image.getWidth())
+            .append(" ")
+            .append(image.getHeight())
+            .append(System.lineSeparator());
+    output.append(maxValue.get(imageName)).append(System.lineSeparator());
+
+    for (int[][] row : image) {
+      for (int[] pixel : row) {
+        for (int rgb : pixel) {
+          output.append(rgb).append(System.lineSeparator());
+        }
+      }
     }
   }
 
@@ -50,7 +89,7 @@ public class BufferedImageProcessorModel implements ImageProcessorModel {
     }
 
     for (int i = output.getMinX(); i < output.getWidth(); i++) {
-      for (int j = output.getMinY(); i < output.getHeight(); i++) {
+      for (int j = output.getMinY(); j < output.getHeight(); j++) {
         Color color = new Color(output.getRGB(i, j));
         output.setRGB(i, j, new Color(color.getRed() + amount,
                 color.getGreen() + amount,
@@ -87,7 +126,7 @@ public class BufferedImageProcessorModel implements ImageProcessorModel {
     }
 
     for (int i = output.getMinX(); i < output.getWidth(); i++) {
-      for (int j = output.getMinY(); i < output.getHeight(); i++) {
+      for (int j = output.getMinY(); j < output.getHeight(); j++) {
         output.setRGB(i, output.getWidth() - 1 - i, reference.getRGB(i, j));
       }
     }
@@ -103,7 +142,7 @@ public class BufferedImageProcessorModel implements ImageProcessorModel {
     }
 
     for (int i = output.getMinX(); i < output.getWidth(); i++) {
-      for (int j = output.getMinY(); i < output.getHeight(); i++) {
+      for (int j = output.getMinY(); j < output.getHeight(); j++) {
         output.setRGB(i, j, greyColor(new Color(output.getRGB(i, j)), mode).getRGB());
       }
     }
@@ -127,7 +166,7 @@ public class BufferedImageProcessorModel implements ImageProcessorModel {
         value = color.getBlue();
         break;
       case Intensity:
-        value = (color.getRed() + color.getGreen() + color.getBlue())/3;
+        value = (color.getRed() + color.getGreen() + color.getBlue()) / 3;
         break;
       case Luma:
         value = (int) (0.2126 * color.getRed() + 0.7152 * color.getGreen() + 0.0722
@@ -147,7 +186,7 @@ public class BufferedImageProcessorModel implements ImageProcessorModel {
     }
 
     for (int i = output.getMinX(); i < output.getWidth(); i++) {
-      for (int j = output.getMinY(); i < output.getHeight(); i++) {
+      for (int j = output.getMinY(); j < output.getHeight(); j++) {
         filterPixel(output, i, j, filter);
       }
     }
@@ -186,7 +225,7 @@ public class BufferedImageProcessorModel implements ImageProcessorModel {
     }
 
     for (int i = output.getMinX(); i < output.getWidth(); i++) {
-      for (int j = output.getMinY(); i < output.getHeight(); i++) {
+      for (int j = output.getMinY(); j < output.getHeight(); j++) {
         transformPixel(output, i, j, transform);
       }
     }
