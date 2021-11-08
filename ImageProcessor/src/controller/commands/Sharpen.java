@@ -19,7 +19,13 @@ public class Sharpen implements ImageProcessorCommand {
 
   @Override
   public void complete(ImageProcessorModel m) throws IllegalStateException {
-
+    double[][] filter = {
+            {-0.125, -0.125, -0.125, -0.125, -0.125},
+            {-0.125, 0.25, 0.25, 0.25, -0.125},
+            {-0.125, 0.25, 1, 0.25, -0.125},
+            {-0.125, 0.25, 0.25, 0.25, -0.125},
+            {-0.125, -0.125, -0.125, -0.125, -0.125}};
+    m.filter(inName, outName, filter);
   }
 
   @Override

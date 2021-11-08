@@ -3,27 +3,28 @@ package controller.commands;
 import model.ImageProcessorModel;
 import view.ImageProcessorView;
 
-public class Blur implements ImageProcessorCommand {
+public class Greyscale implements ImageProcessorCommand {
   private final String inName;
   private final String outName;
 
   /**
-   * Constructs the {@code Blur} object.
+   * Constructs the {@code Greyscale} object.
    * @param inName  the image name to do the operation on
    * @param outName the output name
    */
-  public Blur(String inName, String outName) {
+
+  public Greyscale(String inName, String outName) {
     this.inName = inName;
     this.outName = outName;
   }
 
   @Override
   public void complete(ImageProcessorModel m) throws IllegalStateException {
-    double[][] filter = {
-            {0.0625, 0.125, 0.0625},
-            {0.125, 0.25, 0.125},
-            {0.0625, 0.125, 0.0625}};
-    m.filter(inName, outName, filter);
+    double[][] transform = {
+            {0.393, 0.769, 0.189},
+            {0.349, 0.686, 0.168},
+            {0.272, 0.534, 0.131}};
+    m.transform(inName, outName, transform);
   }
 
   @Override

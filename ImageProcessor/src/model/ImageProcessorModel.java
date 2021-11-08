@@ -55,15 +55,15 @@ public interface ImageProcessorModel {
    * @param out    the name to save the modified image as
    * @param filter the filter to apply to each pixel
    */
-  void filter(String in, String out, int[][] filter);
+  void filter(String in, String out, double[][] filter);
 
   /**
    * Applies the given color transformation to the image
-   * @param in     the image to make changes
-   * @param out    the name to save the modified image as
-   * @param filter the color transformation to apply to each pixel
+   * @param in        the image to make changes
+   * @param out       the name to save the modified image as
+   * @param transform the color transformation to apply to each pixel
    */
-  void transform(String in, String out, int[][] filter);
+  void transform(String in, String out, double[][] transform);
 
   /**
    * This enum represents the possible mode for component. The mode can be

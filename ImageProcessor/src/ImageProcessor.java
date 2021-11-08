@@ -1,3 +1,5 @@
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 
 import controller.ImageProcessorController;
@@ -19,9 +21,18 @@ public class ImageProcessor {
   public static void main(String[] args) {
     ImageProcessorModel model = new ImageProcessorModelImpl();
     ImageProcessorView view = new ImageProcessorViewImpl();
-    ImageProcessorController controller =
-            new ImageProcessorControllerImpl(model, view, new InputStreamReader(System.in));
-
+    ImageProcessorController controller;
+    if (args.length == 0) {
+      controller = new ImageProcessorControllerImpl(model, view, new InputStreamReader(System.in));
+    } else {
+      InputStreamReader input;
+      try {
+        input = new InputStreamReader(new FileInputStream(args[1]));
+      } catch (FileNotFoundException e) {
+        throw new IllegalArgumentException(e.getMessage());
+      }
+      controller = new ImageProcessorControllerImpl(model, view, input);
+    }
     controller.startProcessor();
   }
 }

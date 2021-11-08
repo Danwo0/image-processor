@@ -11,9 +11,11 @@ import controller.commands.Brighten;
 import controller.commands.FlipHorizontal;
 import controller.commands.FlipVertical;
 import controller.commands.Component;
+import controller.commands.Greyscale;
 import controller.commands.ImageProcessorCommand;
 import controller.commands.Load;
 import controller.commands.Save;
+import controller.commands.Sepia;
 import controller.commands.Sharpen;
 import model.ImageProcessorModel;
 import model.ImageProcessorModel.ComponentMode;
@@ -99,7 +101,8 @@ public class ImageProcessorControllerImpl implements ImageProcessorController {
     knownCommands.put("luma", s -> new Component(sc.next(), sc.next(), ComponentMode.Luma));
     knownCommands.put("blur", s -> new Blur(sc.next(), sc.next()));
     knownCommands.put("sharpen", s -> new Sharpen(sc.next(), sc.next()));
-
+    knownCommands.put("greyscale", s -> new Greyscale(sc.next(), sc.next()));
+    knownCommands.put("sepia", s -> new Sepia(sc.next(), sc.next()));
   }
 
   /*

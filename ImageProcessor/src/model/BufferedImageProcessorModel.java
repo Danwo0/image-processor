@@ -167,12 +167,44 @@ public class BufferedImageProcessorModel implements ImageProcessorModel {
   }
 
   @Override
-  public void filter(String in, String out, int[][] filter) {
+  public void filter(String in, String out, double[][] filter) {
+    int filterX = filter[0].length;
+    int filterY = filter.length;
 
+    BufferedImage output = images.get(in);
+    if (output == null) {
+      throw new IllegalArgumentException("Image name is invalid");
+    }
+
+    for (int i = output.getMinX(); i < output.getWidth(); i++) {
+      for (int j = output.getMinY(); i < output.getHeight(); i++) {
+        Color color = new Color(output.getRGB(i, j));
+        output.setRGB(i, j, new Color(color.getRed(),
+                color.getGreen(),
+                color.getBlue()).getRGB());
+      }
+    }
+    images.put(out, output);
   }
 
   @Override
-  public void transform(String in, String out, int[][] filter) {
+  public void transform(String in, String out, double[][] transform) {
+    int filterX = transform[0].length;
+    int filterY = transform.length;
 
+    BufferedImage output = images.get(in);
+    if (output == null) {
+      throw new IllegalArgumentException("Image name is invalid");
+    }
+
+    for (int i = output.getMinX(); i < output.getWidth(); i++) {
+      for (int j = output.getMinY(); i < output.getHeight(); i++) {
+        Color color = new Color(output.getRGB(i, j));
+        output.setRGB(i, j, new Color(color.getRed(),
+                color.getGreen(),
+                color.getBlue()).getRGB());
+      }
+    }
+    images.put(out, output);
   }
 }

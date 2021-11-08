@@ -245,12 +245,12 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
   }
 
   @Override
-  public void filter(String in, String out, int[][] filter) {
+  public void filter(String in, String out, double[][] filter) {
 
   }
 
   @Override
-  public void transform(String in, String out, int[][] filter) {
+  public void transform(String in, String out, double[][] filter) {
 
   }
 }
