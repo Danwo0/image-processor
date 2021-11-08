@@ -12,7 +12,7 @@ public interface ImageProcessorModel {
 
   BufferedImage saveImage(String imageName) throws IllegalArgumentException;
 
-  void loadPPM(String image, String imageName) throws IllegalArgumentException;
+  void loadImage(String image, String imageName) throws IllegalArgumentException;
 
   String savePPM(String imageName) throws IllegalArgumentException;
   /**
