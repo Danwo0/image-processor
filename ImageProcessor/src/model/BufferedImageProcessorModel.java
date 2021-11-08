@@ -91,7 +91,7 @@ public class BufferedImageProcessorModel implements ImageProcessorModel {
   }
 
   @Override
-  public void greyscale(String in, String out, GreyscaleMode mode) {
+  public void greyscale(String in, String out, ComponentMode mode) {
     int[][][] image;
 
     image = images.get(in);
@@ -165,5 +165,14 @@ public class BufferedImageProcessorModel implements ImageProcessorModel {
     images.put(out, output);
     maxValue.put(out, maxValue.get(in));
   }
+
+  @Override
+  public void filter(String in, String out, int[][] filter) {
+
+  }
+
+  @Override
+  public void transform(String in, String out, int[][] filter) {
+
   }
 }

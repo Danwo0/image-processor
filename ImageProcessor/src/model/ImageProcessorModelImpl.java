@@ -243,4 +243,14 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
     images.put(out, output);
     maxValue.put(out, maxValue.get(in));
   }
+
+  @Override
+  public void filter(String in, String out, int[][] filter) {
+
+  }
+
+  @Override
+  public void transform(String in, String out, int[][] filter) {
+
+  }
 }
