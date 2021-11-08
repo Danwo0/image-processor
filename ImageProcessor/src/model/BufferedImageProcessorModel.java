@@ -168,9 +168,6 @@ public class BufferedImageProcessorModel implements ImageProcessorModel {
 
   @Override
   public void filter(String in, String out, double[][] filter) {
-    int filterX = filter[0].length;
-    int filterY = filter.length;
-
     BufferedImage output = images.get(in);
     if (output == null) {
       throw new IllegalArgumentException("Image name is invalid");
@@ -178,20 +175,38 @@ public class BufferedImageProcessorModel implements ImageProcessorModel {
 
     for (int i = output.getMinX(); i < output.getWidth(); i++) {
       for (int j = output.getMinY(); i < output.getHeight(); i++) {
-        Color color = new Color(output.getRGB(i, j));
-        output.setRGB(i, j, new Color(color.getRed(),
-                color.getGreen(),
-                color.getBlue()).getRGB());
+        filterPixel(output, i, j, filter);
       }
     }
     images.put(out, output);
   }
 
+  private void filterPixel(BufferedImage im, int x, int y, double[][] filter) {
+    int filterX = filter[0].length;
+    int filterY = filter.length;
+    int[] val = {0, 0, 0};
+    int fy = 0;
+
+    for (int offY = (filterY / 2) * -1; offY <= filterY / 2; offY++) {
+      int fx = 0;
+      for (int offX = (filterX / 2) * -1; offX <= filterY / 2; offX++) {
+        if ((y + offY > 0 && y + offY < im.getHeight())
+                && (x + offX > 0 && x + offX < im.getWidth())) {
+          Color curColor = new Color(im.getRGB(x + offX, y + offY));
+          val[0] = (int) (val[0] + curColor.getRed() * filter[fy][fx]);
+          val[1] = (int) (val[1] + curColor.getGreen() * filter[fy][fx]);
+          val[2] = (int) (val[2] + curColor.getBlue() * filter[fy][fx]);
+        }
+        fx++;
+      }
+      fy++;
+    }
+
+    im.setRGB(x, y, new Color(val[0], val[1], val[2]).getRGB());
+  }
+
   @Override
   public void transform(String in, String out, double[][] transform) {
-    int filterX = transform[0].length;
-    int filterY = transform.length;
-
     BufferedImage output = images.get(in);
     if (output == null) {
       throw new IllegalArgumentException("Image name is invalid");
@@ -199,12 +214,22 @@ public class BufferedImageProcessorModel implements ImageProcessorModel {
 
     for (int i = output.getMinX(); i < output.getWidth(); i++) {
       for (int j = output.getMinY(); i < output.getHeight(); i++) {
-        Color color = new Color(output.getRGB(i, j));
-        output.setRGB(i, j, new Color(color.getRed(),
-                color.getGreen(),
-                color.getBlue()).getRGB());
+        transformPixel(output, i, j, transform);
       }
     }
     images.put(out, output);
+  }
+
+  private void transformPixel(BufferedImage im, int x, int y, double[][] transform) {
+    int[] val = {0, 0, 0};
+    Color color = new Color(im.getRGB(x, y));
+
+    for (int i = 0; i < 3; i++) {
+      val[i] = (int) (color.getRed() * transform[i][0])
+              + (int) (color.getGreen() * transform[i][1])
+              + (int) (color.getBlue() * transform[i][2]);
+    }
+
+    im.setRGB(x, y, new Color(val[0], val[1], val[2]).getRGB());
   }
 }
