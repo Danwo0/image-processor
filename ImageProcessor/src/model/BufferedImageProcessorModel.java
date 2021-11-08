@@ -63,12 +63,16 @@ public class BufferedImageProcessorModel implements ImageProcessorModel {
   @Override
   public void flipVertical(String in, String out) {
     BufferedImage output = images.get(in);
-    if (output == null) {
+    BufferedImage reference = images.get(in);
+    if (output == null || reference == null) {
       throw new IllegalArgumentException("Image name is invalid");
     }
 
+
     for (int i = output.getMinY(); i < output.getHeight(); i++) {
-      output[image.length - 1 - i] = image[i];
+      for (int j = 0; j < output.getWidth(); j++) {
+        output.setRGB(output.getHeight() - 1 - i, j, reference.getRGB(i, j));
+      }
     }
 
     images.put(out, output);
@@ -77,13 +81,14 @@ public class BufferedImageProcessorModel implements ImageProcessorModel {
   @Override
   public void flipHorizontal(String in, String out) {
     BufferedImage output = images.get(in);
-    if (output == null) {
+    BufferedImage reference = images.get(in);
+    if (output == null || reference == null) {
       throw new IllegalArgumentException("Image name is invalid");
     }
 
     for (int i = output.getMinX(); i < output.getWidth(); i++) {
       for (int j = output.getMinY(); i < output.getHeight(); i++) {
-        output[i][image[i].length - 1 - j] = image[i][j];
+        output.setRGB(i, output.getWidth() - 1 - i, reference.getRGB(i, j));
       }
     }
 
@@ -92,78 +97,46 @@ public class BufferedImageProcessorModel implements ImageProcessorModel {
 
   @Override
   public void greyscale(String in, String out, ComponentMode mode) {
-    int[][][] image;
-
-    image = images.get(in);
-    if (image == null) {
+    BufferedImage output = images.get(in);
+    if (output == null) {
       throw new IllegalArgumentException("Image name is invalid");
     }
 
-    int[][][] output = new int[image.length][image[0].length][3];
-
-    switch (mode) {
-      case Value:
-        for (int i = 0; i < image.length; i++) {
-          for (int j = 0; j < image[i].length; j++) {
-            for (int k = 0; k < image[i][j].length; k++) {
-              output[i][j][k] = Math.max(Math.max(image[i][j][0], image[i][j][1]), image[i][j][2]);
-            }
-          }
-        }
-        break;
-      case ValueR:
-        for (int i = 0; i < image.length; i++) {
-          for (int j = 0; j < image[i].length; j++) {
-            for (int k = 0; k < image[i][j].length; k++) {
-              output[i][j][k] = image[i][j][0];
-            }
-          }
-        }
-        break;
-      case ValueG:
-        for (int i = 0; i < image.length; i++) {
-          for (int j = 0; j < image[i].length; j++) {
-            for (int k = 0; k < image[i][j].length; k++) {
-              output[i][j][k] = image[i][j][1];
-            }
-          }
-        }
-        break;
-      case ValueB:
-        for (int i = 0; i < image.length; i++) {
-          for (int j = 0; j < image[i].length; j++) {
-            for (int k = 0; k < image[i][j].length; k++) {
-              output[i][j][k] = image[i][j][2];
-            }
-          }
-        }
-        break;
-      case Intensity:
-        for (int i = 0; i < image.length; i++) {
-          for (int j = 0; j < image[i].length; j++) {
-            for (int k = 0; k < image[i][j].length; k++) {
-              output[i][j][k] = (image[i][j][0] + image[i][j][1] + image[i][j][2]) / 3;
-            }
-          }
-        }
-        break;
-      case Luma:
-        for (int i = 0; i < image.length; i++) {
-          for (int j = 0; j < image[i].length; j++) {
-            for (int k = 0; k < image[i][j].length; k++) {
-              output[i][j][k] = (int) (0.2126 * image[i][j][0] + 0.7152 * image[i][j][1] + 0.0722
-                      * image[i][j][2]);
-            }
-          }
-        }
-        break;
-      default:
-        output = image;
-        break;
+    for (int i = output.getMinX(); i < output.getWidth(); i++) {
+      for (int j = output.getMinY(); i < output.getHeight(); i++) {
+        output.setRGB(i, j, greyColor(new Color(output.getRGB(i, j)), mode).getRGB());
+      }
     }
 
     images.put(out, output);
-    maxValue.put(out, maxValue.get(in));
+  }
+
+  private Color greyColor(Color color, ComponentMode mode) {
+    int value;
+    switch (mode) {
+      case Value:
+        value = Math.max(color.getRed(), color.getGreen());
+        break;
+      case ValueR:
+        value = color.getRed();
+        break;
+      case ValueG:
+        value = color.getGreen();
+        break;
+      case ValueB:
+        value = color.getBlue();
+        break;
+      case Intensity:
+        value = (color.getRed() + color.getGreen() + color.getBlue())/3;
+        break;
+      case Luma:
+        value = (int) (0.2126 * color.getRed() + 0.7152 * color.getGreen() + 0.0722
+                * color.getBlue());
+        break;
+      default:
+        return color;
+    }
+    return new Color(value, value, value);
   }
 
   @Override
