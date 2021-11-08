@@ -1,5 +1,7 @@
 package model;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -246,11 +248,62 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
 
   @Override
   public void filter(String in, String out, double[][] filter) {
+    int[][][] output = images.get(in);
 
+    for (int i = 0; i < output.length; i++) {
+      for (int j = 0; i < output[0].length; i++) {
+        filterPixel(output, i, j, filter);
+      }
+    }
+    images.put(out, output);
+  }
+
+  private void filterPixel(int[][][] im, int x, int y, double[][] filter) {
+    int filterX = filter[0].length;
+    int filterY = filter.length;
+    int[] val = {0, 0, 0};
+    int fy = 0;
+
+    for (int offY = (filterY / 2) * -1; offY <= filterY / 2; offY++) {
+      int fx = 0;
+      for (int offX = (filterX / 2) * -1; offX <= filterY / 2; offX++) {
+        if ((y + offY > 0 && y + offY < im.length)
+                && (x + offX > 0 && x + offX < im[0].length)) {
+          int[] curColor = im[x + offX][y + offY];
+          val[0] = (int) (val[0] + curColor[0] * filter[fy][fx]);
+          val[1] = (int) (val[1] + curColor[1] * filter[fy][fx]);
+          val[2] = (int) (val[2] + curColor[2] * filter[fy][fx]);
+        }
+        fx++;
+      }
+      fy++;
+    }
+
+    im[x][y] = val;
   }
 
   @Override
-  public void transform(String in, String out, double[][] filter) {
+  public void transform(String in, String out, double[][] transform) {
+    int[][][] output = images.get(in);
 
+    for (int i = 0; i < output.length; i++) {
+      for (int j = 0; i < output[0].length; i++) {
+        transformPixel(output, i, j, transform);
+      }
+    }
+    images.put(out, output);
+  }
+
+  private void transformPixel(int[][][] im, int x, int y, double[][] transform) {
+    int[] val = {0, 0, 0};
+    int[] color = im[x][y];
+
+    for (int i = 0; i < 3; i++) {
+      val[i] = (int) (color[0] * transform[i][0])
+              + (int) (color[1] * transform[i][1])
+              + (int) (color[2] * transform[i][2]);
+    }
+
+    im[x][y] = val;
   }
 }

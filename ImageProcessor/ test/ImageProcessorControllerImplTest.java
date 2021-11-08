@@ -640,6 +640,29 @@ public class ImageProcessorControllerImplTest {
   }
 
   @Test
+  public void testSave() {
+    setInput("save res/controllerSaveTest.ppm name q");
+    ImageProcessorModel saveMock = new ImageProcessorModelMock(log, 2);
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(saveMock, mockView, read);
+    String expected = "Model: Saving a set 2x2 image\n" +
+            "View: Rendering message: Successfully saved name at res/controllerSaveTest.ppm.";
+
+    controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+
+    String expectedImage = "P3\n2 2\n255\n60\n60\n60\n120\n120\n120\n180\n180\n180\n240\n240\n240";
+    String actualImage = "";
+    try {
+      actualImage = Files.readString(Paths.get("res/controllerSaveTest.ppm"));
+    } catch (IOException e) {
+      fail();
+    }
+    assertEquals(expectedImage, actualImage);
+  }
+
+  @Test
   public void testBadReadable() {
     setInput("load image.ppm name");
     Readable badRead = new ReadableMock();
