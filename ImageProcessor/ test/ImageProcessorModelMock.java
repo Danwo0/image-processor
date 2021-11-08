@@ -41,17 +41,15 @@ public class ImageProcessorModelMock implements ImageProcessorModel {
   }
 
   @Override
-  public String saveImage(String imageName) throws IllegalArgumentException {
+  public void saveImage(String fileName, String imageName) throws IllegalArgumentException {
     if (this.mode == 1) {
       log.append("Model: ").append(imageName)
               .append(" does not exist.").append(System.lineSeparator());
       throw new IllegalArgumentException("Error in save");
     } else if (this.mode == 2) {
       log.append("Model: Saving a set 2x2 image").append(System.lineSeparator());
-      return "P3\n2 2\n255\n60\n60\n60\n120\n120\n120\n180\n180\n180\n240\n240\n240";
     } else {
       log.append("Model: Saving image: ").append(imageName).append(System.lineSeparator());
-      return imageName;
     }
   }
 
@@ -89,7 +87,7 @@ public class ImageProcessorModelMock implements ImageProcessorModel {
   }
 
   @Override
-  public void greyscale(String in, String out, GreyscaleMode mode) {
+  public void greyscale(String in, String out, ComponentMode mode) {
     if (this.mode == 1) {
       log.append("Model: ").append(in)
               .append(" does not exist.").append(System.lineSeparator());

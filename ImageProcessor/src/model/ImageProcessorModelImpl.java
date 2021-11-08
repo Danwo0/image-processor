@@ -2,6 +2,8 @@ package model;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -63,7 +65,8 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
   }
 
   @Override
-  public String saveImage(String imageName) throws IllegalArgumentException {
+  public void saveImage(String fileName, String imageName)
+          throws IllegalArgumentException, IllegalStateException {
     int[][][] image;
 
     image = images.get(imageName);
@@ -87,7 +90,13 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
       }
     }
 
-    return output.toString().trim();
+    try {
+      FileWriter imageWriter = new FileWriter(fileName);
+      imageWriter.write(output.toString().trim());
+      imageWriter.close();
+    } catch (IOException e) {
+      throw new IllegalStateException("Failed to save image.");
+    }
   }
 
   @Override
@@ -160,7 +169,7 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
   }
 
   @Override
-  public void greyscale(String in, String out, GreyscaleMode mode) throws IllegalArgumentException {
+  public void greyscale(String in, String out, ComponentMode mode) throws IllegalArgumentException {
     int[][][] image;
 
     image = images.get(in);

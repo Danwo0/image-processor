@@ -6,15 +6,17 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.function.Function;
 
+import controller.commands.Blur;
 import controller.commands.Brighten;
 import controller.commands.FlipHorizontal;
 import controller.commands.FlipVertical;
-import controller.commands.Greyscale;
+import controller.commands.Component;
 import controller.commands.ImageProcessorCommand;
 import controller.commands.Load;
 import controller.commands.Save;
+import controller.commands.Sharpen;
 import model.ImageProcessorModel;
-import model.ImageProcessorModel.GreyscaleMode;
+import model.ImageProcessorModel.ComponentMode;
 import view.ImageProcessorView;
 
 /**
@@ -85,16 +87,19 @@ public class ImageProcessorControllerImpl implements ImageProcessorController {
     knownCommands.put("hflip", s -> new FlipHorizontal(sc.next(), sc.next()));
     knownCommands.put("brighten", s -> new Brighten(sc.next(), sc.next(), sc.next()));
     knownCommands.put("value-component",
-        s -> new Greyscale(sc.next(), sc.next(), GreyscaleMode.Value));
+        s -> new Component(sc.next(), sc.next(), ComponentMode.Value));
     knownCommands.put("red-component",
-        s -> new Greyscale(sc.next(), sc.next(), GreyscaleMode.ValueR));
+        s -> new Component(sc.next(), sc.next(), ComponentMode.ValueR));
     knownCommands.put("green-component",
-        s -> new Greyscale(sc.next(), sc.next(), GreyscaleMode.ValueG));
+        s -> new Component(sc.next(), sc.next(), ComponentMode.ValueG));
     knownCommands.put("blue-component",
-        s -> new Greyscale(sc.next(), sc.next(), GreyscaleMode.ValueB));
+        s -> new Component(sc.next(), sc.next(), ComponentMode.ValueB));
     knownCommands.put("intensity",
-        s -> new Greyscale(sc.next(), sc.next(), GreyscaleMode.Intensity));
-    knownCommands.put("luma", s -> new Greyscale(sc.next(), sc.next(), GreyscaleMode.Luma));
+        s -> new Component(sc.next(), sc.next(), ComponentMode.Intensity));
+    knownCommands.put("luma", s -> new Component(sc.next(), sc.next(), ComponentMode.Luma));
+    knownCommands.put("blur", s -> new Blur(sc.next(), sc.next()));
+    knownCommands.put("sharpen", s -> new Sharpen(sc.next(), sc.next()));
+
   }
 
   /*

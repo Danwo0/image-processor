@@ -1,15 +1,15 @@
 package controller.commands;
 
 import model.ImageProcessorModel;
-import model.ImageProcessorModel.GreyscaleMode;
+import model.ImageProcessorModel.ComponentMode;
 
 /**
  * The {@code Greyscale} class represents the operation of the greyscale commands from controller.
  */
-public class Greyscale extends AbstractCommand {
+public class Component extends AbstractCommand {
   private final String inName;
   private final String outName;
-  private final GreyscaleMode mode;
+  private final ComponentMode mode;
 
   /**
    * Constructs the {@code Greyscale} object.
@@ -17,7 +17,7 @@ public class Greyscale extends AbstractCommand {
    * @param outName the output name
    * @param mode    the mode of the greyscale
    */
-  public Greyscale(String inName, String outName, GreyscaleMode mode) {
+  public Component(String inName, String outName, ComponentMode mode) {
     this.inName = inName;
     this.outName = outName;
     this.mode = mode;

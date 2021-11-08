@@ -47,13 +47,29 @@ public interface ImageProcessorModel {
    *
    * @param mode The mode in which the greyscale is done by
    */
-  void greyscale(String in, String out, GreyscaleMode mode);
+  void greyscale(String in, String out, ComponentMode mode);
 
   /**
-   * This enum represents the possible mode for greycscale. The mode can be
+   * Applies the given filter to the image
+   * @param in     the image to make changes
+   * @param out    the name to save the modified image as
+   * @param filter the filter to apply to each pixel
+   */
+  void filter(String in, String out, int[][] filter);
+
+  /**
+   * Applies the given color transformation to the image
+   * @param in     the image to make changes
+   * @param out    the name to save the modified image as
+   * @param filter the color transformation to apply to each pixel
+   */
+  void transform(String in, String out, int[][] filter);
+
+  /**
+   * This enum represents the possible mode for component. The mode can be
    * either by red value, green value, blue value, intensity, or Luma.
    */
-  enum GreyscaleMode {
+  enum ComponentMode {
     Value,
     ValueR,
     ValueG,
