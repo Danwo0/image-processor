@@ -1,29 +1,20 @@
 package model;
 
+import java.awt.image.BufferedImage;
+
 /**
  * This interface represents the operations offered by the image processor
  * model. One object of the model represents one instance of image processor.
  */
 public interface ImageProcessorModel {
 
-  /**
-   * Loads the given image into the model.
-   *
-   * @param fileName  the name of the file to load
-   * @param imageName the name to refer to loaded image
-   * @throws IllegalArgumentException if given an invalid file name
-   */
-  void loadImage(String fileName, String imageName) throws IllegalArgumentException;
+  void loadImage(BufferedImage image, String imageName) throws IllegalArgumentException;
 
-  /**
-   * Saves the given image from the model.
-   *
-   * @param fileName  the name of the file to save
-   * @param imageName the name to refer to saved image
-   * @throws IllegalArgumentException if fails saving
-   */
-  void saveImage(String fileName, String imageName) throws IllegalStateException, IllegalArgumentException;
+  BufferedImage saveImage(String imageName) throws IllegalArgumentException;
 
+  void loadPPM(String image, String imageName) throws IllegalArgumentException;
+
+  String savePPM(String imageName) throws IllegalArgumentException;
   /**
    * Change the brightness of the image by the given amount.
    *
