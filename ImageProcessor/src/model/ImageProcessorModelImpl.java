@@ -44,7 +44,7 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
     int width = Integer.parseInt(dim[0]);
     int height = Integer.parseInt(dim[1]);
 
-    int[][][] image = new int[width][height][3];
+    int[][][] image = new int[height][width][3];
     maxValue.put(imageName, sc.nextInt());
 
     for (int i = 0; i < image.length; i++) {
@@ -64,10 +64,10 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
       throw new IllegalArgumentException("image null");
     }
 
-    int[][][] loaded_image = new int[image.getWidth()][image.getHeight()][3];
+    int[][][] loaded_image = new int[image.getHeight()][image.getWidth()][3];
 
-    for (int i = image.getMinX(); i < image.getWidth(); i++) {
-      for (int j = image.getMinY(); j < image.getHeight(); j++) {
+    for (int i = image.getMinY(); i < image.getHeight(); i++) {
+      for (int j = image.getMinX(); j < image.getWidth(); j++) {
         loaded_image[i][j][0] = new Color(image.getRGB(i, j)).getRed();
         loaded_image[i][j][1] = new Color(image.getRGB(i, j)).getGreen();
         loaded_image[i][j][2] = new Color(image.getRGB(i, j)).getBlue();
