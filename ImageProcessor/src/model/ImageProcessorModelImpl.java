@@ -2,10 +2,6 @@ package model;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -28,14 +24,8 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
   }
 
   @Override
-  public void loadImage(String fileName, String imageName) throws IllegalArgumentException {
-    Scanner sc;
-
-    try {
-      sc = new Scanner(new FileInputStream(fileName));
-    } catch (FileNotFoundException e) {
-      throw new IllegalArgumentException(e.getMessage());
-    }
+  public void loadImage(String image_text, String imageName) throws IllegalArgumentException {
+    Scanner sc = new Scanner(image_text);
 
     if (!sc.nextLine().equals("P3")) {
       throw new IllegalArgumentException("Invalid PPM file: plain RAW file should begin with P3");
@@ -67,8 +57,49 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
   }
 
   @Override
-  public void saveImage(String fileName, String imageName)
-          throws IllegalArgumentException, IllegalStateException {
+  public void loadImage(BufferedImage image, String imageName) throws IllegalArgumentException {
+    if (image == null) {
+      throw new IllegalArgumentException("image null");
+    }
+
+    int[][][] loaded_image = new int[image.getWidth()][image.getHeight()][3];
+
+    for (int i = image.getMinX(); i < image.getWidth(); i++) {
+      for (int j = image.getMinY(); j < image.getHeight(); j++) {
+        loaded_image[i][j][0] = new Color(image.getRGB(i, j)).getRed();
+        loaded_image[i][j][1] = new Color(image.getRGB(i, j)).getGreen();
+        loaded_image[i][j][2] = new Color(image.getRGB(i, j)).getBlue();
+      }
+    }
+
+    images.put(imageName, loaded_image);
+    maxValue.put(imageName, (int) Math.pow(2, image.getColorModel().getPixelSize()) - 1);
+  }
+
+  @Override
+  public BufferedImage saveImage(String imageName) throws IllegalArgumentException {
+    int[][][] image;
+
+    image = images.get(imageName);
+    if (image == null) {
+      throw new IllegalArgumentException("Image name is invalid");
+    }
+    BufferedImage saved_image = new BufferedImage(image.length,
+            image[0].length, BufferedImage.TYPE_INT_RGB);
+
+    for (int i = 0; i < image.length; i++) {
+      for (int j = 0; j < image[i].length; j++) {
+        saved_image.setRGB(i, j, new Color(image[i][j][0] / maxValue.get(imageName) * 255,
+                image[i][j][1] / maxValue.get(imageName) * 255,
+                image[i][j][2] / maxValue.get(imageName) * 255).getRGB());
+      }
+    }
+
+    return saved_image;
+  }
+
+  @Override
+  public String savePPM(String imageName) throws IllegalArgumentException {
     int[][][] image;
 
     image = images.get(imageName);
@@ -92,13 +123,7 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
       }
     }
 
-    try {
-      FileWriter imageWriter = new FileWriter(fileName);
-      imageWriter.write(output.toString().trim());
-      imageWriter.close();
-    } catch (IOException e) {
-      throw new IllegalStateException("Failed to save image.");
-    }
+    return output.toString();
   }
 
   @Override

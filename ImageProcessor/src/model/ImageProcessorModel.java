@@ -10,9 +10,10 @@ public interface ImageProcessorModel {
 
   void loadImage(BufferedImage image, String imageName) throws IllegalArgumentException;
 
+  void loadImage(String image_text, String imageName) throws IllegalArgumentException;
+
   BufferedImage saveImage(String imageName) throws IllegalArgumentException;
 
-  void loadImage(String image, String imageName) throws IllegalArgumentException;
 
   String savePPM(String imageName) throws IllegalArgumentException;
   /**
