@@ -1,4 +1,8 @@
+import java.awt.image.BufferedImage;
+
 import model.ImageProcessorModel;
+
+import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 
 /**
  * This is a mock model for {@code ImageProcessorModel} made for testing purposes.
@@ -31,26 +35,37 @@ public class ImageProcessorModelMock implements ImageProcessorModel {
   }
 
   @Override
-  public void loadImage(String fileName, String imageName) throws IllegalArgumentException {
-    if (this.mode == 1) {
-      log.append("Model: Failed to find ").append(fileName).append(System.lineSeparator());
-      throw new IllegalArgumentException("Error in load");
-    }
-    log.append("Model: Loading image \"").append(fileName)
-            .append("\" as: ").append(imageName).append(System.lineSeparator());
+  public void loadImage(BufferedImage image, String imageName) {
+    log.append("Model: Received image from controller as: ")
+            .append(imageName).append(System.lineSeparator());
   }
 
   @Override
-  public void saveImage(String fileName, String imageName) throws IllegalArgumentException {
+  public void loadImage(String fileName, String imageName) throws IllegalArgumentException {
+    log.append("Model: Received image from controller as: ")
+            .append(imageName).append(System.lineSeparator());
+  }
+
+  @Override
+  public BufferedImage saveImage(String imageName) throws IllegalArgumentException {
     if (this.mode == 1) {
       log.append("Model: ").append(imageName)
               .append(" does not exist.").append(System.lineSeparator());
       throw new IllegalArgumentException("Error in save");
-    } else if (this.mode == 2) {
-      log.append("Model: Saving a set 2x2 image").append(System.lineSeparator());
-    } else {
-      log.append("Model: Saving image: ").append(imageName).append(System.lineSeparator());
     }
+    log.append("Model: Sending image: ").append(imageName).append(System.lineSeparator());
+    return new BufferedImage(2, 2, TYPE_INT_RGB);
+  }
+
+  @Override
+  public String savePPM(String imageName) throws IllegalArgumentException {
+    if (this.mode == 1) {
+      log.append("Model: ").append(imageName)
+              .append(" does not exist.").append(System.lineSeparator());
+      throw new IllegalArgumentException("Error in save");
+    }
+    log.append("Model: Sending image: ").append(imageName).append(System.lineSeparator());
+    return "ppm image";
   }
 
   @Override
@@ -94,6 +109,28 @@ public class ImageProcessorModelMock implements ImageProcessorModel {
       throw new IllegalArgumentException("Error in greyscale");
     }
     log.append("Model: Greyscale: ").append(in).append(" by ").append(mode)
+            .append("; saved as: ").append(out).append(System.lineSeparator());
+  }
+
+  @Override
+  public void filter(String in, String out, double[][] filter) {
+    if (this.mode == 1) {
+      log.append("Model: ").append(in)
+              .append(" does not exist.").append(System.lineSeparator());
+      throw new IllegalArgumentException("Error in flipHorizontal");
+    }
+    log.append("Model: Applying filter on: ").append(in)
+            .append("; saved as: ").append(out).append(System.lineSeparator());
+  }
+
+  @Override
+  public void transform(String in, String out, double[][] transform) {
+    if (this.mode == 1) {
+      log.append("Model: ").append(in)
+              .append(" does not exist.").append(System.lineSeparator());
+      throw new IllegalArgumentException("Error in flipHorizontal");
+    }
+    log.append("Model: Applying color transform on: ").append(in)
             .append("; saved as: ").append(out).append(System.lineSeparator());
   }
 }

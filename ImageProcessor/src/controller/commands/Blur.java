@@ -3,7 +3,7 @@ package controller.commands;
 import model.ImageProcessorModel;
 import view.ImageProcessorView;
 
-public class Blur implements ImageProcessorCommand {
+public class Blur extends AbstractCommand {
   private final String inName;
   private final String outName;
 
@@ -24,10 +24,6 @@ public class Blur implements ImageProcessorCommand {
             {0.125, 0.25, 0.125},
             {0.0625, 0.125, 0.0625}};
     m.filter(inName, outName, filter);
-  }
-
-  @Override
-  public void feedback(ImageProcessorView v) throws IllegalStateException {
-
+    message = "Blurred " + inName + "." + System.lineSeparator();
   }
 }

@@ -3,7 +3,7 @@ package controller.commands;
 import model.ImageProcessorModel;
 import view.ImageProcessorView;
 
-public class Sepia implements ImageProcessorCommand {
+public class Sepia extends AbstractCommand {
   String inName;
   String outName;
 
@@ -25,10 +25,6 @@ public class Sepia implements ImageProcessorCommand {
             {0.2126, 0.7152, 0.0722},
             {0.2126, 0.7152, 0.0722}};
     m.transform(inName, outName, transform);
-  }
-
-  @Override
-  public void feedback(ImageProcessorView v) throws IllegalStateException {
-
+    message = "Applied sepia transform on " + inName + "." + System.lineSeparator();
   }
 }

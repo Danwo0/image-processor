@@ -3,7 +3,7 @@ package controller.commands;
 import model.ImageProcessorModel;
 import view.ImageProcessorView;
 
-public class Greyscale implements ImageProcessorCommand {
+public class Greyscale extends AbstractCommand {
   private final String inName;
   private final String outName;
 
@@ -25,10 +25,6 @@ public class Greyscale implements ImageProcessorCommand {
             {0.349, 0.686, 0.168},
             {0.272, 0.534, 0.131}};
     m.transform(inName, outName, transform);
-  }
-
-  @Override
-  public void feedback(ImageProcessorView v) throws IllegalStateException {
-
+    message = "Applied greyscale transform on " + inName + "." + System.lineSeparator();
   }
 }

@@ -57,7 +57,37 @@ public class ImageProcessorModelImplTest {
 
   private void resetModel() {
     model = new ImageProcessorModelImpl();
-    model.loadImage("./res/pix.ppm", "Test");
+    model.loadImage("P3\n" +
+            "# Created by us\n" +
+            "3 3\n" +
+            "10\n" +
+            "0\n" +
+            "0\n" +
+            "0\n" +
+            "0\n" +
+            "5\n" +
+            "10\n" +
+            "10\n" +
+            "10\n" +
+            "10\n" +
+            "5\n" +
+            "5\n" +
+            "5\n" +
+            "5\n" +
+            "10\n" +
+            "10\n" +
+            "10\n" +
+            "10\n" +
+            "5\n" +
+            "10\n" +
+            "5\n" +
+            "0\n" +
+            "10\n" +
+            "10\n" +
+            "0\n" +
+            "0\n" +
+            "10\n" +
+            "0", "Test");
   }
 
   @Test(expected = IllegalArgumentException.class)

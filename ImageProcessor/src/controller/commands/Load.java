@@ -37,6 +37,8 @@ public class Load extends AbstractCommand {
       try {
         loadedImage = ImageIO.read(new FileInputStream(fileName));
         m.loadImage(loadedImage, imageName);
+        message = "Successfully loaded " + fileName + " as "
+                + imageName + "." + System.lineSeparator();
       } catch (IllegalArgumentException e) {
         message = "Given path is invalid." + System.lineSeparator();
       } catch (IOException e) {
@@ -47,7 +49,7 @@ public class Load extends AbstractCommand {
 
   private void completePPM(ImageProcessorModel m) {
     try {
-      m.loadPPM(Files.readString(Paths.get("res/controllerSaveTest.ppm")), imageName);
+      m.loadImage(Files.readString(Paths.get(fileName)), imageName);
       message = "Successfully loaded " + fileName + " as "
               + imageName + "." + System.lineSeparator();
     } catch (IllegalArgumentException e) {

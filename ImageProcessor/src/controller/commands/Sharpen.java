@@ -3,7 +3,7 @@ package controller.commands;
 import model.ImageProcessorModel;
 import view.ImageProcessorView;
 
-public class Sharpen implements ImageProcessorCommand {
+public class Sharpen extends AbstractCommand {
   private final String inName;
   private final String outName;
 
@@ -26,10 +26,6 @@ public class Sharpen implements ImageProcessorCommand {
             {-0.125, 0.25, 0.25, 0.25, -0.125},
             {-0.125, -0.125, -0.125, -0.125, -0.125}};
     m.filter(inName, outName, filter);
-  }
-
-  @Override
-  public void feedback(ImageProcessorView v) throws IllegalStateException {
-
+    message = "Sharpened " + inName + "." + System.lineSeparator();
   }
 }
