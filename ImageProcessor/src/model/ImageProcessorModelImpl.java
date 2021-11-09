@@ -294,7 +294,7 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
   private void filterPixel(int[][][] in, int[][][] out, int x, int y, double[][] filter) {
     int fWidth = filter[0].length;
     int fHeight = filter.length;
-    int[] val = {0, 0, 0};
+    double[] val = {0, 0, 0};
     int fy = 0;
 
     for (int offY = -(fHeight / 2); offY <= fHeight / 2; offY++) {
@@ -303,16 +303,19 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
         if ((y + offY >= 0 && y + offY < in[0].length)
                 && (x + offX >= 0 && x + offX < in.length)) {
           int[] curColor = in[x + offX][y + offY];
-          val[0] = (int) (val[0] + curColor[0] * filter[fy][fx]);
-          val[1] = (int) (val[1] + curColor[1] * filter[fy][fx]);
-          val[2] = (int) (val[2] + curColor[2] * filter[fy][fx]);
+          val[0] = (val[0] + curColor[0] * filter[fy][fx]);
+          val[1] = (val[1] + curColor[1] * filter[fy][fx]);
+          val[2] = (val[2] + curColor[2] * filter[fy][fx]);
         }
         fx++;
       }
       fy++;
     }
 
-    out[x][y] = val;
+    for (int i = 0; i < 3; i++) {
+      if (val[i] > 255) val[i] = 255;
+      out[x][y][i] = (int) val[i];
+    }
   }
 
   @Override
@@ -334,19 +337,18 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
   }
 
   private void transformPixel(int[][][] in, int[][][] out, int x, int y, double[][] transform) {
-    int[] val = {0, 0, 0};
+    double[] val = {0, 0, 0};
     int[] color = in[x][y];
 
     for (int i = 0; i < 3; i++) {
-      val[i] = (int) (color[0] * transform[i][0])
-              + (int) (color[1] * transform[i][1])
-              + (int) (color[2] * transform[i][2]);
+      val[i] = (color[0] * transform[i][0])
+              + (color[1] * transform[i][1])
+              + (color[2] * transform[i][2]);
     }
 
     for (int i = 0; i < 3; i++) {
       if (val[i] > 255) val[i] = 255;
+      out[x][y][i] = (int) val[i];
     }
-
-    out[x][y] = val;
   }
 }

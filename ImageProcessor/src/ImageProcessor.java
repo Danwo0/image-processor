@@ -19,7 +19,7 @@ public class ImageProcessor {
    * @param args command line arguments
    */
   public static void main(String[] args) {
-    //test();
+    test();
     run(args);
   }
 
@@ -35,16 +35,20 @@ public class ImageProcessor {
             {0.349, 0.686, 0.168},
             {0.272, 0.534, 0.131}};
     m.loadImage("P3\n" +
-            "4 2\n" +
-            "10\n" +
-            "0\n0\n0\n" +
-            "0\n5\n10\n" +
-            "10\n10\n10\n" +
-            "5\n5\n5\n" +
-            "5\n10\n10\n" +
-            "10\n10\n5\n" +
-            "10\n5\n0\n" +
-            "10\n10\n0", "test");
+            "4 3\n" +
+            "255\n" +
+            "255\n255\n255\n" +
+            "255\n255\n255\n" +
+            "255\n255\n255\n" +
+            "255\n255\n255\n" +
+            "255\n255\n255\n" +
+            "255\n255\n255\n" +
+            "255\n255\n255\n" +
+            "255\n255\n255\n" +
+            "255\n255\n255\n" +
+            "255\n255\n255\n" +
+            "255\n255\n255\n" +
+            "255\n255\n255", "test");
     m.filter("test", "testout", filter);
     m.filter("testout", "testout2", filter);
     //m.transform("test", "testout2", transform);
