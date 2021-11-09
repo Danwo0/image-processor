@@ -68,9 +68,9 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
 
     for (int i = image.getMinY(); i < image.getHeight(); i++) {
       for (int j = image.getMinX(); j < image.getWidth(); j++) {
-        loaded_image[i][j][0] = new Color(image.getRGB(i, j)).getRed();
-        loaded_image[i][j][1] = new Color(image.getRGB(i, j)).getGreen();
-        loaded_image[i][j][2] = new Color(image.getRGB(i, j)).getBlue();
+        loaded_image[j][i][0] = new Color(image.getRGB(i, j)).getRed();
+        loaded_image[j][i][1] = new Color(image.getRGB(i, j)).getGreen();
+        loaded_image[j][i][2] = new Color(image.getRGB(i, j)).getBlue();
       }
     }
 
@@ -86,14 +86,14 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
     if (image == null) {
       throw new IllegalArgumentException("Image name is invalid");
     }
-    BufferedImage saved_image = new BufferedImage(image.length,
-            image[0].length, BufferedImage.TYPE_INT_RGB);
+    BufferedImage saved_image = new BufferedImage(image[0].length,
+            image.length, BufferedImage.TYPE_INT_RGB);
 
     for (int i = 0; i < image.length; i++) {
       for (int j = 0; j < image[i].length; j++) {
-        saved_image.setRGB(i, j, new Color(image[i][j][0] / maxValue.get(imageName) * 255,
-                image[i][j][1] / maxValue.get(imageName) * 255,
-                image[i][j][2] / maxValue.get(imageName) * 255).getRGB());
+        saved_image.setRGB(j, i, new Color((int) (image[i][j][0] / maxValue.get(imageName) * 255.0),
+                (int) (image[i][j][1] / maxValue.get(imageName) * 255.0),
+                (int) (image[i][j][2] / maxValue.get(imageName) * 255.0)).getRGB());
       }
     }
 
@@ -111,9 +111,9 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
 
     StringBuilder output = new StringBuilder("P3" + System.lineSeparator());
     output.append("# Created by us").append(System.lineSeparator());
-    output.append(image.length)
+    output.append(image[0].length)
             .append(" ")
-            .append(image[0].length)
+            .append(image.length)
             .append(System.lineSeparator());
     output.append(maxValue.get(imageName)).append(System.lineSeparator());
 
@@ -320,7 +320,7 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
 
   @Override
   public void transform(String in, String out, double[][] transform)
-          throws IllegalArgumentException  {
+          throws IllegalArgumentException {
     int[][][] image = images.get(in);
     if (image == null) {
       throw new IllegalArgumentException("Image name is invalid");
