@@ -37,7 +37,7 @@ public class Brighten extends AbstractCommand {
       m.changeBrightness(inName, outName, amount);
       message = "Changed brightness of " + inName + " by " + amount + System.lineSeparator();
     } catch (IllegalArgumentException e) {
-      message = "Given filename does not exist!" + System.lineSeparator();
+      message = "Given image name does not exist!" + System.lineSeparator();
     }
   }
 }

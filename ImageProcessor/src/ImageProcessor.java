@@ -19,6 +19,41 @@ public class ImageProcessor {
    * @param args command line arguments
    */
   public static void main(String[] args) {
+    //test();
+    run(args);
+  }
+
+  private static void test() {
+    ImageProcessorModel m = new ImageProcessorModelImpl();
+
+    double[][] filter = {
+            {0.0625, 0.125, 0.0625},
+            {0.125, 0.25, 0.125},
+            {0.0625, 0.125, 0.0625}};
+    double[][] transform = {
+            {0.393, 0.769, 0.189},
+            {0.349, 0.686, 0.168},
+            {0.272, 0.534, 0.131}};
+    m.loadImage("P3\n" +
+            "4 2\n" +
+            "10\n" +
+            "0\n0\n0\n" +
+            "0\n5\n10\n" +
+            "10\n10\n10\n" +
+            "5\n5\n5\n" +
+            "5\n10\n10\n" +
+            "10\n10\n5\n" +
+            "10\n5\n0\n" +
+            "10\n10\n0", "test");
+    m.filter("test", "testout", filter);
+    m.filter("testout", "testout2", filter);
+    //m.transform("test", "testout2", transform);
+    System.out.println(m.savePPM("test"));
+    System.out.println(m.savePPM("testout"));
+    System.out.println(m.savePPM("testout2"));
+  }
+
+  private static void run(String[] args) {
     ImageProcessorModel model = new ImageProcessorModelImpl();
     ImageProcessorView view = new ImageProcessorViewImpl();
     ImageProcessorController controller;

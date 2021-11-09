@@ -25,7 +25,11 @@ public class Sharpen extends AbstractCommand {
             {-0.125, 0.25, 1, 0.25, -0.125},
             {-0.125, 0.25, 0.25, 0.25, -0.125},
             {-0.125, -0.125, -0.125, -0.125, -0.125}};
-    m.filter(inName, outName, filter);
-    message = "Sharpened " + inName + "." + System.lineSeparator();
+    try {
+      m.filter(inName, outName, filter);
+      message = "Sharpened " + inName + "." + System.lineSeparator();
+    } catch (IllegalArgumentException e) {
+      message = "Given image name does not exist!" + System.lineSeparator();
+    }
   }
 }

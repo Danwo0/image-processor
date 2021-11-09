@@ -29,7 +29,7 @@ public class Component extends AbstractCommand {
       m.greyscale(inName, outName, mode);
       message = "Successfully converted " + inName + "." + System.lineSeparator();
     } catch (IllegalArgumentException e) {
-      message = "Given filename does not exist!" + System.lineSeparator();
+      message = "Given image name does not exist!" + System.lineSeparator();
     }
   }
 }

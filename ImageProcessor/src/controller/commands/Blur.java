@@ -23,7 +23,11 @@ public class Blur extends AbstractCommand {
             {0.0625, 0.125, 0.0625},
             {0.125, 0.25, 0.125},
             {0.0625, 0.125, 0.0625}};
-    m.filter(inName, outName, filter);
-    message = "Blurred " + inName + "." + System.lineSeparator();
+    try {
+      m.filter(inName, outName, filter);
+      message = "Blurred " + inName + "." + System.lineSeparator();
+    } catch (IllegalArgumentException e) {
+      message = "Given image name does not exist!" + System.lineSeparator();
+    }
   }
 }

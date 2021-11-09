@@ -26,7 +26,7 @@ public class FlipVertical extends AbstractCommand {
       m.flipVertical(inName, outName);
       message = "Flipped " + inName + " over the x-axis." + System.lineSeparator();
     } catch (IllegalArgumentException e) {
-      message = "Given filename does not exist!" + System.lineSeparator();
+      message = "Given image name does not exist!" + System.lineSeparator();
     }
   }
 }
