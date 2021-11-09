@@ -1,6 +1,11 @@
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
+
+import javax.imageio.ImageIO;
 
 import controller.ImageProcessorController;
 import controller.ImageProcessorControllerImpl;
@@ -18,12 +23,12 @@ public class ImageProcessor {
    * The main method for starting the processor.
    * @param args command line arguments
    */
-  public static void main(String[] args) {
+  public static void main(String[] args) throws IOException {
     test();
-    run(args);
+    //run(args);
   }
 
-  private static void test() {
+  private static void test() throws IOException {
     ImageProcessorModel m = new ImageProcessorModelImpl();
 
     double[][] filter = {
@@ -34,27 +39,16 @@ public class ImageProcessor {
             {0.393, 0.769, 0.189},
             {0.349, 0.686, 0.168},
             {0.272, 0.534, 0.131}};
-    m.loadImage("P3\n" +
-            "4 3\n" +
-            "255\n" +
-            "255\n255\n255\n" +
-            "255\n255\n255\n" +
-            "255\n255\n255\n" +
-            "255\n255\n255\n" +
-            "255\n255\n255\n" +
-            "255\n255\n255\n" +
-            "255\n255\n255\n" +
-            "255\n255\n255\n" +
-            "255\n255\n255\n" +
-            "255\n255\n255\n" +
-            "255\n255\n255\n" +
-            "255\n255\n255", "test");
-    m.filter("test", "testout", filter);
-    m.filter("testout", "testout2", filter);
+    m.loadImage(ImageIO.read(new FileInputStream("testv.png")), "test");
+    //m.filter("test", "testout", filter);
+    //m.filter("testout", "testout2", filter);
     //m.transform("test", "testout2", transform);
-    System.out.println(m.savePPM("test"));
-    System.out.println(m.savePPM("testout"));
-    System.out.println(m.savePPM("testout2"));
+    System.out.println(m.saveImage("test"));
+    ImageIO.write(m.saveImage("test"), "png", new File("testv2.png"));
+    FileWriter iw = new FileWriter("testv.ppm");
+    iw.write(m.savePPM("test"));
+    iw.close();
+    //System.out.println(m.savePPM("testout2"));
   }
 
   private static void run(String[] args) {

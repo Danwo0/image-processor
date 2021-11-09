@@ -49,7 +49,11 @@ public class Save extends AbstractCommand {
         }
       } catch (IOException e) {
         message = "Writing failed";
+        return;
       }
+
+      message = "Successfully saved " + imageName + " at "
+              + outName + "." + System.lineSeparator();
     }
   }
 

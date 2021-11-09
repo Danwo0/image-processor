@@ -68,9 +68,9 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
 
     for (int i = image.getMinY(); i < image.getHeight(); i++) {
       for (int j = image.getMinX(); j < image.getWidth(); j++) {
-        loaded_image[j][i][0] = new Color(image.getRGB(i, j)).getRed();
-        loaded_image[j][i][1] = new Color(image.getRGB(i, j)).getGreen();
-        loaded_image[j][i][2] = new Color(image.getRGB(i, j)).getBlue();
+        loaded_image[i][j][0] = new Color(image.getRGB(j, i)).getRed();
+        loaded_image[i][j][1] = new Color(image.getRGB(j, i)).getGreen();
+        loaded_image[i][j][2] = new Color(image.getRGB(j, i)).getBlue();
       }
     }
 
