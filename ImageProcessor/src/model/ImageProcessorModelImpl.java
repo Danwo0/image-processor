@@ -91,9 +91,9 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
     for (int i = 0; i < image.length; i++) {
       for (int j = 0; j < image[i].length; j++) {
         saved_image.setRGB(j, i, new Color(
-                (int) (image[i][j][0] / (maxValue.get(imageName) / 255.0)),
-                (int) (image[i][j][1] / (maxValue.get(imageName) / 255.0)),
-                (int) (image[i][j][2] / (maxValue.get(imageName) / 255.0))).getRGB());
+                Math.round(image[i][j][0] / (maxValue.get(imageName) / 255.0)),
+                Math.round(image[i][j][1] / (maxValue.get(imageName) / 255.0)),
+                Math.round(image[i][j][2] / (maxValue.get(imageName) / 255.0))).getRGB());
       }
     }
 
@@ -285,20 +285,29 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
     for (int i = 0; i < 3; i++) {
       if (val[i] > max) val[i] = max;
       if (val[i] < 0) val[i] = 0;
-      out[x][y][i] = (int) val[i];
+      out[x][y][i] = (int) Math.round(val[i]);
     }
   }
 
   @Override
   public void transform(String in, String out, Transforms mode)
           throws IllegalArgumentException {
-    int[][][] image = images.get(in);
-    int max = maxValue.get(in);
-    double[][] transform = getTransform(mode);
+    int[][][] image;
+    int max;
+    double[][] transform;
+
+    try {
+      image = images.get(in);
+      max = maxValue.get(in);
+      transform = getTransform(mode);
+    } catch (NullPointerException e) {
+      throw new IllegalArgumentException(e.getMessage());
+    }
 
     if (image == null) {
       throw new IllegalArgumentException("Image name is invalid");
     }
+
     int[][][] output = new int[image.length][image[0].length][3];
 
     for (int i = 0; i < image[0].length; i++) {
@@ -363,7 +372,7 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
     for (int i = 0; i < 3; i++) {
       if (val[i] > max) val[i] = max;
       if (val[i] < 0) val[i] = 0;
-      out[y][x][i] = (int) val[i];
+      out[y][x][i] = (int) Math.round(val[i]);
     }
   }
 }
