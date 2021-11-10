@@ -45,7 +45,8 @@ public class Save extends AbstractCommand {
                   + outName + "." + System.lineSeparator();
         }
       } catch (IllegalArgumentException e) {
-        message = e.getMessage() + System.lineSeparator();
+        message = "The given image name does not exist!: "
+                + e.getMessage() + System.lineSeparator();
       } catch (IOException e) {
         message = "Given filename does not exist!" + System.lineSeparator();
       }

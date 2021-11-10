@@ -41,21 +41,21 @@ public class ImageProcessorModelImplTest {
     model = new ImageProcessorModelImpl();
 
     try {
-      pix = Files.readString(Paths.get("ImageProcessor/res/pix.ppm"));
-      pix2 = Files.readString(Paths.get("ImageProcessor/res/pix2.ppm"));
-      pixBrighter = Files.readString(Paths.get("ImageProcessor/res/pixBrighter.ppm"));
-      pixDarker = Files.readString(Paths.get("ImageProcessor/res/pixDarker.ppm"));
-      pixVertical = Files.readString(Paths.get("ImageProcessor/res/pixVertical.ppm"));
-      pixHorizontal = Files.readString(Paths.get("ImageProcessor/res/pixHorizontal.ppm"));
-      pixGreyValue = Files.readString(Paths.get("ImageProcessor/res/pixGreyValue.ppm"));
-      pixGreyR = Files.readString(Paths.get("ImageProcessor/res/pixGreyR.ppm"));
-      pixGreyG = Files.readString(Paths.get("ImageProcessor/res/pixGreyG.ppm"));
-      pixGreyB = Files.readString(Paths.get("ImageProcessor/res/pixGreyB.ppm"));
-      pixGreyLuma = Files.readString(Paths.get("ImageProcessor/res/pixGreyLuma.ppm"));
-      pixGreyIntensity = Files.readString(Paths.get("ImageProcessor/res/pixGreyIntensity.ppm"));
-      pixVerticalHorizontal = Files.readString(Paths.get("ImageProcessor/res/pixVerticalHorizontal.ppm"));
-      pixHorizontalVertical = Files.readString(Paths.get("ImageProcessor/res/pixHorizontalVertical.ppm"));
-      clown = Files.readString(Paths.get("ImageProcessor/res/clown.ppm"));
+      pix = Files.readString(Paths.get("res/pix.ppm"));
+      pix2 = Files.readString(Paths.get("res/pix2.ppm"));
+      pixBrighter = Files.readString(Paths.get("res/pixBrighter.ppm"));
+      pixDarker = Files.readString(Paths.get("res/pixDarker.ppm"));
+      pixVertical = Files.readString(Paths.get("res/pixVertical.ppm"));
+      pixHorizontal = Files.readString(Paths.get("res/pixHorizontal.ppm"));
+      pixGreyValue = Files.readString(Paths.get("res/pixGreyValue.ppm"));
+      pixGreyR = Files.readString(Paths.get("res/pixGreyR.ppm"));
+      pixGreyG = Files.readString(Paths.get("res/pixGreyG.ppm"));
+      pixGreyB = Files.readString(Paths.get("res/pixGreyB.ppm"));
+      pixGreyLuma = Files.readString(Paths.get("res/pixGreyLuma.ppm"));
+      pixGreyIntensity = Files.readString(Paths.get("res/pixGreyIntensity.ppm"));
+      pixVerticalHorizontal = Files.readString(Paths.get("res/pixVerticalHorizontal.ppm"));
+      pixHorizontalVertical = Files.readString(Paths.get("res/pixHorizontalVertical.ppm"));
+      clown = Files.readString(Paths.get("res/clown.ppm"));
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -98,12 +98,12 @@ public class ImageProcessorModelImplTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void loadNonPPM() {
-    model.loadImage("ImageProcessor/res/P2.ppm", "haha");
+    model.loadImage("res/P2.ppm", "haha");
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void load404() {
-    model.loadImage("ImageProcessor/res/ThisFileDoesnt.Exist", "haha");
+    model.loadImage("res/ThisFileDoesnt.Exist", "haha");
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -270,7 +270,7 @@ public class ImageProcessorModelImplTest {
     resetModel();
 
     try {
-      model.loadImage(ImageIO.read(new FileInputStream("ImageProcessor/res/clown.png")),
+      model.loadImage(ImageIO.read(new FileInputStream("res/clown.png")),
               "Test");
     } catch (IOException e) {
       e.printStackTrace();
