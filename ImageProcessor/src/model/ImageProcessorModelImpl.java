@@ -88,7 +88,6 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
     }
     BufferedImage saved_image = new BufferedImage(image[0].length,
             image.length, BufferedImage.TYPE_INT_RGB);
-
     for (int i = 0; i < image.length; i++) {
       for (int j = 0; j < image[i].length; j++) {
         saved_image.setRGB(j, i, new Color(
@@ -279,6 +278,7 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
           throws IllegalArgumentException {
     int[][][] image = images.get(in);
     int max = maxValue.get(in);
+
     if (image == null) {
       throw new IllegalArgumentException("Image name is invalid");
     }
@@ -317,6 +317,7 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
 
     for (int i = 0; i < 3; i++) {
       if (val[i] > max) val[i] = max;
+      if (val[i] < 0) val[i] = 0;
       out[x][y][i] = (int) val[i];
     }
   }
@@ -352,6 +353,7 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
 
     for (int i = 0; i < 3; i++) {
       if (val[i] > max) val[i] = max;
+      if (val[i] < 0) val[i] = 0;
       out[y][x][i] = (int) val[i];
     }
   }
