@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import controller.commands.Blur;
-
 /**
  * The {@code ImageProcessorModelImpl} class is an implementation of the
  * {@code ImageProcessorModel} interface, responsible containing all the necessary data
@@ -91,9 +89,9 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
     for (int i = 0; i < image.length; i++) {
       for (int j = 0; j < image[i].length; j++) {
         saved_image.setRGB(j, i, new Color(
-                Math.round(image[i][j][0] / (maxValue.get(imageName) / 255.0)),
-                Math.round(image[i][j][1] / (maxValue.get(imageName) / 255.0)),
-                Math.round(image[i][j][2] / (maxValue.get(imageName) / 255.0))).getRGB());
+                (int) (image[i][j][0] / (maxValue.get(imageName) / 255.0)),
+                (int) (image[i][j][1] / (maxValue.get(imageName) / 255.0)),
+                (int) (image[i][j][2] / (maxValue.get(imageName) / 255.0))).getRGB());
       }
     }
 
@@ -243,7 +241,7 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
   }
 
   private double[][] getFilter(Filters mode) {
-    switch(mode) {
+    switch (mode) {
       case Blur:
         return new double[][]{
                 {0.0625, 0.125, 0.0625},
@@ -281,12 +279,7 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
       }
       fy++;
     }
-
-    for (int i = 0; i < 3; i++) {
-      if (val[i] > max) val[i] = max;
-      if (val[i] < 0) val[i] = 0;
-      out[x][y][i] = (int) Math.round(val[i]);
-    }
+    verifyValues(out, y, x, max, val);
   }
 
   @Override
@@ -348,9 +341,9 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
                 {0.2126, 0.7152, 0.0722}};
       case Sepia:
         return new double[][]{
-              {0.393, 0.769, 0.189},
-              {0.349, 0.686, 0.168},
-              {0.272, 0.534, 0.131}};
+                {0.393, 0.769, 0.189},
+                {0.349, 0.686, 0.168},
+                {0.272, 0.534, 0.131}};
       default:
         return new double[][]{
                 {1.0, 0.0, 0.0},
@@ -369,6 +362,10 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
               + (color[2] * transform[i][2]);
     }
 
+    verifyValues(out, x, y, max, val);
+  }
+
+  private void verifyValues(int[][][] out, int x, int y, int max, double[] val) {
     for (int i = 0; i < 3; i++) {
       if (val[i] > max) val[i] = max;
       if (val[i] < 0) val[i] = 0;
