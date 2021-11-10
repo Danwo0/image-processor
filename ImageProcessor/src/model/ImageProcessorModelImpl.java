@@ -75,7 +75,7 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
     }
 
     images.put(imageName, loaded_image);
-    maxValue.put(imageName, (int) Math.pow(2, image.getColorModel().getPixelSize()) - 1);
+    maxValue.put(imageName, (int) Math.pow(2, image.getColorModel().getPixelSize() / 3.0) - 1);
   }
 
   @Override
