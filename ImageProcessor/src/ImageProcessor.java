@@ -24,8 +24,8 @@ public class ImageProcessor {
    * @param args command line arguments
    */
   public static void main(String[] args) throws IOException {
-    test();
-    //run(args);
+    //test();
+    run(args);
   }
 
   private static void test() throws IOException {

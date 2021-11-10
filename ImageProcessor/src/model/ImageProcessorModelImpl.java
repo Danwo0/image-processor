@@ -75,7 +75,7 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
     }
 
     images.put(imageName, loaded_image);
-    maxValue.put(imageName, (int) Math.pow(2, image.getColorModel().getPixelSize() / 3.0) - 1);
+    maxValue.put(imageName, 255);
   }
 
   @Override
@@ -91,9 +91,10 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
 
     for (int i = 0; i < image.length; i++) {
       for (int j = 0; j < image[i].length; j++) {
-        saved_image.setRGB(j, i, new Color((int) (image[i][j][0] / maxValue.get(imageName) * 255.0),
-                (int) (image[i][j][1] / maxValue.get(imageName) * 255.0),
-                (int) (image[i][j][2] / maxValue.get(imageName) * 255.0)).getRGB());
+        saved_image.setRGB(j, i, new Color(
+                (int) (image[i][j][0] / (maxValue.get(imageName) / 255.0)),
+                (int) (image[i][j][1] / (maxValue.get(imageName) / 255.0)),
+                (int) (image[i][j][2] / (maxValue.get(imageName) / 255.0))).getRGB());
       }
     }
 
@@ -277,6 +278,7 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
   public void filter(String in, String out, double[][] filter)
           throws IllegalArgumentException {
     int[][][] image = images.get(in);
+    int max = maxValue.get(in);
     if (image == null) {
       throw new IllegalArgumentException("Image name is invalid");
     }
@@ -284,14 +286,15 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
 
     for (int i = 0; i < image.length; i++) {
       for (int j = 0; j < image[0].length; j++) {
-        filterPixel(image, output, i, j, filter);
+        filterPixel(image, output, i, j, max, filter);
       }
     }
+
     images.put(out, output);
-    maxValue.put(out, maxValue.get(in));
+    maxValue.put(out, max);
   }
 
-  private void filterPixel(int[][][] in, int[][][] out, int x, int y, double[][] filter) {
+  private void filterPixel(int[][][] in, int[][][] out, int x, int y, int max, double[][] filter) {
     int fWidth = filter[0].length;
     int fHeight = filter.length;
     double[] val = {0, 0, 0};
@@ -313,7 +316,7 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
     }
 
     for (int i = 0; i < 3; i++) {
-      if (val[i] > 255) val[i] = 255;
+      if (val[i] > max) val[i] = max;
       out[x][y][i] = (int) val[i];
     }
   }
@@ -322,23 +325,24 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
   public void transform(String in, String out, double[][] transform)
           throws IllegalArgumentException {
     int[][][] image = images.get(in);
+    int max = maxValue.get(in);
     if (image == null) {
       throw new IllegalArgumentException("Image name is invalid");
     }
     int[][][] output = new int[image.length][image[0].length][3];
 
-    for (int i = 0; i < image.length; i++) {
-      for (int j = 0; j < image[0].length; j++) {
-        transformPixel(image, output, i, j, transform);
+    for (int i = 0; i < image[0].length; i++) {
+      for (int j = 0; j < image.length; j++) {
+        transformPixel(image, output, i, j, max, transform);
       }
     }
     images.put(out, output);
-    maxValue.put(out, maxValue.get(in));
+    maxValue.put(out, max);
   }
 
-  private void transformPixel(int[][][] in, int[][][] out, int x, int y, double[][] transform) {
+  private void transformPixel(int[][][] in, int[][][] out, int x, int y, int max, double[][] transform) {
     double[] val = {0, 0, 0};
-    int[] color = in[x][y];
+    int[] color = in[y][x];
 
     for (int i = 0; i < 3; i++) {
       val[i] = (color[0] * transform[i][0])
@@ -347,8 +351,8 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
     }
 
     for (int i = 0; i < 3; i++) {
-      if (val[i] > 255) val[i] = 255;
-      out[x][y][i] = (int) val[i];
+      if (val[i] > max) val[i] = max;
+      out[y][x][i] = (int) val[i];
     }
   }
 }
