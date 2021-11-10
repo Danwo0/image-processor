@@ -36,20 +36,20 @@ public class ImageProcessorModelImplTest {
     model = new ImageProcessorModelImpl();
 
     try {
-      pix = Files.readString(Paths.get("./res/pix.ppm"));
-      pix2 = Files.readString(Paths.get("./res/pix2.ppm"));
-      pixBrighter = Files.readString(Paths.get("./res/pixBrighter.ppm"));
-      pixDarker = Files.readString(Paths.get("./res/pixDarker.ppm"));
-      pixVertical = Files.readString(Paths.get("./res/pixVertical.ppm"));
-      pixHorizontal = Files.readString(Paths.get("./res/pixHorizontal.ppm"));
-      pixGreyValue = Files.readString(Paths.get("./res/pixGreyValue.ppm"));
-      pixGreyR = Files.readString(Paths.get("./res/pixGreyR.ppm"));
-      pixGreyG = Files.readString(Paths.get("./res/pixGreyG.ppm"));
-      pixGreyB = Files.readString(Paths.get("./res/pixGreyB.ppm"));
-      pixGreyLuma = Files.readString(Paths.get("./res/pixGreyLuma.ppm"));
-      pixGreyIntensity = Files.readString(Paths.get("./res/pixGreyIntensity.ppm"));
-      pixVerticalHorizontal = Files.readString(Paths.get("./res/pixVerticalHorizontal.ppm"));
-      pixHorizontalVertical = Files.readString(Paths.get("./res/pixHorizontalVertical.ppm"));
+      pix = Files.readString(Paths.get("ImageProcessor/res/pix.ppm"));
+      pix2 = Files.readString(Paths.get("ImageProcessor/res/pix2.ppm"));
+      pixBrighter = Files.readString(Paths.get("ImageProcessor/res/pixBrighter.ppm"));
+      pixDarker = Files.readString(Paths.get("ImageProcessor/res/pixDarker.ppm"));
+      pixVertical = Files.readString(Paths.get("ImageProcessor/res/pixVertical.ppm"));
+      pixHorizontal = Files.readString(Paths.get("ImageProcessor/res/pixHorizontal.ppm"));
+      pixGreyValue = Files.readString(Paths.get("ImageProcessor/res/pixGreyValue.ppm"));
+      pixGreyR = Files.readString(Paths.get("ImageProcessor/res/pixGreyR.ppm"));
+      pixGreyG = Files.readString(Paths.get("ImageProcessor/res/pixGreyG.ppm"));
+      pixGreyB = Files.readString(Paths.get("ImageProcessor/res/pixGreyB.ppm"));
+      pixGreyLuma = Files.readString(Paths.get("ImageProcessor/res/pixGreyLuma.ppm"));
+      pixGreyIntensity = Files.readString(Paths.get("ImageProcessor/res/pixGreyIntensity.ppm"));
+      pixVerticalHorizontal = Files.readString(Paths.get("ImageProcessor/res/pixVerticalHorizontal.ppm"));
+      pixHorizontalVertical = Files.readString(Paths.get("ImageProcessor/res/pixHorizontalVertical.ppm"));
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -92,17 +92,17 @@ public class ImageProcessorModelImplTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void loadNonPPM() {
-    model.loadImage("./res/P2.ppm", "haha");
+    model.loadImage("ImageProcessor/res/P2.ppm", "haha");
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void load404() {
-    model.loadImage("./res/ThisFileDoesnt.Exist", "haha");
+    model.loadImage("ImageProcessor/res/ThisFileDoesnt.Exist", "haha");
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void saveNotInMap() {
-    model.saveImage("DoesntExist");
+    model.savePPM("DoesntExist");
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -128,17 +128,16 @@ public class ImageProcessorModelImplTest {
   @Test
   public void testLoad() {
     resetModel();
-    assertEquals(model.saveImage("Test"), pix);
+    assertEquals(model.savePPM("Test"), pix);
   }
 
   @Test
   public void testOverwrite() {
     resetModel();
 
-    model.loadImage("./res/pix2.ppm", "Test2");
-    model.loadImage("./res/pix2.ppm", "Test");
-    assertEquals(model.saveImage("Test2"), pix2);
-    assertEquals(model.saveImage("Test"), pix2);
+    model.loadImage(pix, "Test");
+    model.loadImage(pix2, "Test");
+    assertEquals(model.savePPM("Test"), pix2);
   }
 
   @Test
@@ -147,8 +146,8 @@ public class ImageProcessorModelImplTest {
 
     model.changeBrightness("Test", "TestOut", 1);
     model.changeBrightness("Test", "Test", 1);
-    assertEquals(model.saveImage("TestOut"), pixBrighter);
-    assertEquals(model.saveImage("Test"), pixBrighter);
+    assertEquals(model.savePPM("TestOut"), pixBrighter);
+    assertEquals(model.savePPM("Test"), pixBrighter);
   }
 
   @Test
@@ -157,8 +156,8 @@ public class ImageProcessorModelImplTest {
 
     model.changeBrightness("Test", "TestOut", -1);
     model.changeBrightness("Test", "Test", -1);
-    assertEquals(model.saveImage("TestOut"), pixDarker);
-    assertEquals(model.saveImage("Test"), pixDarker);
+    assertEquals(model.savePPM("TestOut"), pixDarker);
+    assertEquals(model.savePPM("Test"), pixDarker);
   }
 
   @Test
@@ -167,8 +166,8 @@ public class ImageProcessorModelImplTest {
 
     model.flipVertical("Test", "TestOut");
     model.flipVertical("Test", "Test");
-    assertEquals(model.saveImage("TestOut"), pixVertical);
-    assertEquals(model.saveImage("Test"), pixVertical);
+    assertEquals(model.savePPM("TestOut"), pixVertical);
+    assertEquals(model.savePPM("Test"), pixVertical);
   }
 
   @Test
@@ -177,8 +176,8 @@ public class ImageProcessorModelImplTest {
 
     model.flipHorizontal("Test", "TestOut");
     model.flipHorizontal("Test", "Test");
-    assertEquals(model.saveImage("TestOut"), pixHorizontal);
-    assertEquals(model.saveImage("Test"), pixHorizontal);
+    assertEquals(model.savePPM("TestOut"), pixHorizontal);
+    assertEquals(model.savePPM("Test"), pixHorizontal);
   }
 
   @Test
@@ -187,8 +186,8 @@ public class ImageProcessorModelImplTest {
 
     model.greyscale("Test", "TestOut", ImageProcessorModel.ComponentMode.Value);
     model.greyscale("Test", "Test", ImageProcessorModel.ComponentMode.Value);
-    assertEquals(model.saveImage("TestOut"), pixGreyValue);
-    assertEquals(model.saveImage("Test"), pixGreyValue);
+    assertEquals(model.savePPM("TestOut"), pixGreyValue);
+    assertEquals(model.savePPM("Test"), pixGreyValue);
   }
 
   @Test
@@ -197,8 +196,8 @@ public class ImageProcessorModelImplTest {
 
     model.greyscale("Test", "TestOut", ImageProcessorModel.ComponentMode.ValueR);
     model.greyscale("Test", "Test", ImageProcessorModel.ComponentMode.ValueR);
-    assertEquals(model.saveImage("TestOut"), pixGreyR);
-    assertEquals(model.saveImage("Test"), pixGreyR);
+    assertEquals(model.savePPM("TestOut"), pixGreyR);
+    assertEquals(model.savePPM("Test"), pixGreyR);
   }
 
   @Test
@@ -207,8 +206,8 @@ public class ImageProcessorModelImplTest {
 
     model.greyscale("Test", "TestOut", ImageProcessorModel.ComponentMode.ValueG);
     model.greyscale("Test", "Test", ImageProcessorModel.ComponentMode.ValueG);
-    assertEquals(model.saveImage("TestOut"), pixGreyG);
-    assertEquals(model.saveImage("Test"), pixGreyG);
+    assertEquals(model.savePPM("TestOut"), pixGreyG);
+    assertEquals(model.savePPM("Test"), pixGreyG);
   }
 
   @Test
@@ -217,8 +216,8 @@ public class ImageProcessorModelImplTest {
 
     model.greyscale("Test", "TestOut", ImageProcessorModel.ComponentMode.ValueB);
     model.greyscale("Test", "Test", ImageProcessorModel.ComponentMode.ValueB);
-    assertEquals(model.saveImage("TestOut"), pixGreyB);
-    assertEquals(model.saveImage("Test"), pixGreyB);
+    assertEquals(model.savePPM("TestOut"), pixGreyB);
+    assertEquals(model.savePPM("Test"), pixGreyB);
   }
 
   @Test
@@ -227,8 +226,8 @@ public class ImageProcessorModelImplTest {
 
     model.greyscale("Test", "TestOut", ImageProcessorModel.ComponentMode.Intensity);
     model.greyscale("Test", "Test", ImageProcessorModel.ComponentMode.Intensity);
-    assertEquals(model.saveImage("TestOut"), pixGreyIntensity);
-    assertEquals(model.saveImage("Test"), pixGreyIntensity);
+    assertEquals(model.savePPM("TestOut"), pixGreyIntensity);
+    assertEquals(model.savePPM("Test"), pixGreyIntensity);
   }
 
   @Test
@@ -237,8 +236,8 @@ public class ImageProcessorModelImplTest {
 
     model.greyscale("Test", "TestOut", ImageProcessorModel.ComponentMode.Luma);
     model.greyscale("Test", "Test", ImageProcessorModel.ComponentMode.Luma);
-    assertEquals(model.saveImage("TestOut"), pixGreyLuma);
-    assertEquals(model.saveImage("Test"), pixGreyLuma);
+    assertEquals(model.savePPM("TestOut"), pixGreyLuma);
+    assertEquals(model.savePPM("Test"), pixGreyLuma);
   }
 
   @Test
@@ -247,7 +246,7 @@ public class ImageProcessorModelImplTest {
 
     model.flipVertical("Test", "Test");
     model.flipHorizontal("Test", "Test");
-    assertEquals(model.saveImage("Test"), pixVerticalHorizontal);
+    assertEquals(model.savePPM("Test"), pixVerticalHorizontal);
   }
 
   @Test
@@ -256,6 +255,6 @@ public class ImageProcessorModelImplTest {
 
     model.flipHorizontal("Test", "Test");
     model.flipVertical("Test", "Test");
-    assertEquals(model.saveImage("Test"), pixHorizontalVertical);
+    assertEquals(model.savePPM("Test"), pixHorizontalVertical);
   }
 }

@@ -126,7 +126,7 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
       }
     }
 
-    return output.toString();
+    return output.toString().trim();
   }
 
   @Override
