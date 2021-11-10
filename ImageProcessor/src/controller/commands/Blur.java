@@ -1,7 +1,7 @@
 package controller.commands;
 
 import model.ImageProcessorModel;
-import view.ImageProcessorView;
+import model.ImageProcessorModel.Filters;
 
 public class Blur extends AbstractCommand {
   private final String inName;
@@ -19,12 +19,8 @@ public class Blur extends AbstractCommand {
 
   @Override
   public void complete(ImageProcessorModel m) throws IllegalStateException {
-    double[][] filter = {
-            {0.0625, 0.125, 0.0625},
-            {0.125, 0.25, 0.125},
-            {0.0625, 0.125, 0.0625}};
     try {
-      m.filter(inName, outName, filter);
+      m.filter(inName, outName, Filters.Blur);
       message = "Blurred " + inName + "." + System.lineSeparator();
     } catch (IllegalArgumentException e) {
       message = "Given image name does not exist!" + System.lineSeparator();

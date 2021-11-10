@@ -30,6 +30,7 @@ public class Load extends AbstractCommand {
   @Override
   public void complete(ImageProcessorModel m) {
     String format = fileName.substring(fileName.lastIndexOf(".") + 1);
+
     if (format.equalsIgnoreCase("ppm")) {
       completePPM(m);
     } else {

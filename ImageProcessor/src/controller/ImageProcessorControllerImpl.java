@@ -10,7 +10,7 @@ import controller.commands.Blur;
 import controller.commands.Brighten;
 import controller.commands.FlipHorizontal;
 import controller.commands.FlipVertical;
-import controller.commands.Component;
+import controller.commands.Value;
 import controller.commands.Greyscale;
 import controller.commands.ImageProcessorCommand;
 import controller.commands.Load;
@@ -18,7 +18,7 @@ import controller.commands.Save;
 import controller.commands.Sepia;
 import controller.commands.Sharpen;
 import model.ImageProcessorModel;
-import model.ImageProcessorModel.ComponentMode;
+import model.ImageProcessorModel.Transforms;
 import view.ImageProcessorView;
 
 /**
@@ -89,19 +89,18 @@ public class ImageProcessorControllerImpl implements ImageProcessorController {
     knownCommands.put("hflip", s -> new FlipHorizontal(sc.next(), sc.next()));
     knownCommands.put("brighten", s -> new Brighten(sc.next(), sc.next(), sc.next()));
     knownCommands.put("value-component",
-        s -> new Component(sc.next(), sc.next(), ComponentMode.Value));
+        s -> new Value(sc.next(), sc.next()));
     knownCommands.put("red-component",
-        s -> new Component(sc.next(), sc.next(), ComponentMode.ValueR));
+        s -> new Greyscale(sc.next(), sc.next(), Transforms.ValueR));
     knownCommands.put("green-component",
-        s -> new Component(sc.next(), sc.next(), ComponentMode.ValueG));
+        s -> new Greyscale(sc.next(), sc.next(), Transforms.ValueG));
     knownCommands.put("blue-component",
-        s -> new Component(sc.next(), sc.next(), ComponentMode.ValueB));
+        s -> new Greyscale(sc.next(), sc.next(), Transforms.ValueB));
     knownCommands.put("intensity",
-        s -> new Component(sc.next(), sc.next(), ComponentMode.Intensity));
-    knownCommands.put("luma", s -> new Component(sc.next(), sc.next(), ComponentMode.Luma));
+        s -> new Greyscale(sc.next(), sc.next(), Transforms.Intensity));
+    knownCommands.put("luma", s -> new Greyscale(sc.next(), sc.next(), Transforms.Luma));
     knownCommands.put("blur", s -> new Blur(sc.next(), sc.next()));
     knownCommands.put("sharpen", s -> new Sharpen(sc.next(), sc.next()));
-    knownCommands.put("greyscale", s -> new Greyscale(sc.next(), sc.next()));
     knownCommands.put("sepia", s -> new Sepia(sc.next(), sc.next()));
   }
 
@@ -139,6 +138,12 @@ public class ImageProcessorControllerImpl implements ImageProcessorController {
     writeMessage("intensity image-name dest-image-name (greyscale the image by the average value)"
             + System.lineSeparator());
     writeMessage("luma image-name dest-image-name (greyscale the image by luma value)"
+            + System.lineSeparator());
+    writeMessage("blur image-name dest-image-name (blurs the image)"
+            + System.lineSeparator());
+    writeMessage("sharpen image-name dest-image-name (sharpens the image)"
+            + System.lineSeparator());
+    writeMessage("sepia image-name dest-image-name (applies sepia filter on the image)"
             + System.lineSeparator());
     writeMessage("menu (shows all the available supported instructions)" + System.lineSeparator());
     writeMessage("q or quit (quits the processor)" + System.lineSeparator());

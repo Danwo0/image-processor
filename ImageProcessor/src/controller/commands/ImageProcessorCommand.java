@@ -13,7 +13,7 @@ public interface ImageProcessorCommand {
    *
    * @param m the model to complete the command with
    */
-  void complete(ImageProcessorModel m) throws IllegalStateException;
+  void complete(ImageProcessorModel m);
 
   /**
    * Send a message based on the output of the operation.
