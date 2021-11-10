@@ -27,7 +27,6 @@ public class ImageProcessorModelMock implements ImageProcessorModel {
    * @param mode integer to specify the mock's behavior
    *             0 will work normally
    *             1 will always throw the exceptions
-   *             2 is specific to save, will return a set image string back.
    */
   public ImageProcessorModelMock(StringBuilder log, int mode) {
     this.log = log;
@@ -54,7 +53,8 @@ public class ImageProcessorModelMock implements ImageProcessorModel {
       throw new IllegalArgumentException("Error in save");
     }
     log.append("Model: Sending image: ").append(imageName).append(System.lineSeparator());
-    return new BufferedImage(2, 2, TYPE_INT_RGB);
+    BufferedImage image = new BufferedImage(300, 400, TYPE_INT_RGB);
+    return image;
   }
 
   @Override
@@ -102,29 +102,29 @@ public class ImageProcessorModelMock implements ImageProcessorModel {
   }
 
   @Override
-  public void greyscale(String in, String out, ComponentMode mode) {
+  public void value(String in, String out) {
     if (this.mode == 1) {
       log.append("Model: ").append(in)
               .append(" does not exist.").append(System.lineSeparator());
       throw new IllegalArgumentException("Error in greyscale");
     }
-    log.append("Model: Greyscale: ").append(in).append(" by ").append(mode)
+    log.append("Model: Greyscale: ").append(in).append(" by max value")
             .append("; saved as: ").append(out).append(System.lineSeparator());
   }
 
   @Override
-  public void filter(String in, String out, double[][] filter) {
+  public void filter(String in, String out, Filters mode) {
     if (this.mode == 1) {
       log.append("Model: ").append(in)
               .append(" does not exist.").append(System.lineSeparator());
       throw new IllegalArgumentException("Error in flipHorizontal");
     }
-    log.append("Model: Applying filter on: ").append(in)
+    log.append("Model: Applying ").append(mode.toString()).append(" filter on: ").append(in)
             .append("; saved as: ").append(out).append(System.lineSeparator());
   }
 
   @Override
-  public void transform(String in, String out, double[][] transform) {
+  public void transform(String in, String out, Transforms mode) {
     if (this.mode == 1) {
       log.append("Model: ").append(in)
               .append(" does not exist.").append(System.lineSeparator());

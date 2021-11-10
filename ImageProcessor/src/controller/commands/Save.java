@@ -31,43 +31,33 @@ public class Save extends AbstractCommand {
   @Override
   public void complete(ImageProcessorModel m) {
     String format = outName.substring(outName.lastIndexOf(".") + 1);
+
     if (format.equalsIgnoreCase("ppm")) {
       completePPM(m);
     } else {
+      RenderedImage image = null;
       try {
-        RenderedImage image = null;
-        try {
-          image = m.saveImage(imageName);
-        } catch (IllegalArgumentException e) {
-          message = "The given image name does not exist!";
-          return;
-        }
-
+        image = m.saveImage(imageName);
         if (!ImageIO.write(image, format, new File(outName))) {
-          message = "Writing failed.";
-          return;
+          message = "Writing failed." + System.lineSeparator();
+        } else {
+          message = "Successfully saved " + imageName + " at "
+                  + outName + "." + System.lineSeparator();
         }
+      } catch (IllegalArgumentException e) {
+        message = "The given image name does not exist!" + System.lineSeparator();
       } catch (IOException e) {
-        message = "Writing failed";
-        return;
+        message = "Given filename does not exist!" + System.lineSeparator();
       }
-
-      message = "Successfully saved " + imageName + " at "
-              + outName + "." + System.lineSeparator();
     }
   }
 
-  // specifically works with PPM formas
+  // specifically works with PPM formats
   private void completePPM(ImageProcessorModel m) {
     String image = "";
     try {
       image = m.savePPM(imageName);
-    } catch (IllegalArgumentException e) {
-      message = "Given filename does not exist!" + System.lineSeparator();
-      return;
-    }
 
-    try {
       FileWriter imageWriter = new FileWriter(outName);
       imageWriter.write(image);
       imageWriter.close();
@@ -75,6 +65,8 @@ public class Save extends AbstractCommand {
               + outName + "." + System.lineSeparator();
     } catch (IOException e) {
       message = "Failed to write to !" + outName + "." + System.lineSeparator();
+    } catch (IllegalArgumentException e) {
+      message = "Given filename does not exist!" + System.lineSeparator();
     }
   }
 }

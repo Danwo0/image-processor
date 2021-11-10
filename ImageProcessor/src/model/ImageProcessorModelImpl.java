@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import controller.commands.AbstractCommand;
+import controller.commands.Blur;
 
 /**
  * The {@code ImageProcessorModelImpl} class is an implementation of the
@@ -198,7 +198,7 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
   }
 
   @Override
-  public void greyscale(String in, String out, ComponentMode mode) throws IllegalArgumentException {
+  public void value(String in, String out) throws IllegalArgumentException {
     int[][][] image;
 
     image = images.get(in);
@@ -208,65 +208,12 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
 
     int[][][] output = new int[image.length][image[0].length][3];
 
-    switch (mode) {
-      case Value:
-        for (int i = 0; i < image.length; i++) {
-          for (int j = 0; j < image[i].length; j++) {
-            for (int k = 0; k < image[i][j].length; k++) {
-              output[i][j][k] = Math.max(Math.max(image[i][j][0], image[i][j][1]), image[i][j][2]);
-            }
-          }
+    for (int i = 0; i < image.length; i++) {
+      for (int j = 0; j < image[i].length; j++) {
+        for (int k = 0; k < image[i][j].length; k++) {
+          output[i][j][k] = Math.max(Math.max(image[i][j][0], image[i][j][1]), image[i][j][2]);
         }
-        break;
-      case ValueR:
-        for (int i = 0; i < image.length; i++) {
-          for (int j = 0; j < image[i].length; j++) {
-            for (int k = 0; k < image[i][j].length; k++) {
-              output[i][j][k] = image[i][j][0];
-            }
-          }
-        }
-        break;
-      case ValueG:
-        for (int i = 0; i < image.length; i++) {
-          for (int j = 0; j < image[i].length; j++) {
-            for (int k = 0; k < image[i][j].length; k++) {
-              output[i][j][k] = image[i][j][1];
-            }
-          }
-        }
-        break;
-      case ValueB:
-        for (int i = 0; i < image.length; i++) {
-          for (int j = 0; j < image[i].length; j++) {
-            for (int k = 0; k < image[i][j].length; k++) {
-              output[i][j][k] = image[i][j][2];
-            }
-          }
-        }
-        break;
-      case Intensity:
-        for (int i = 0; i < image.length; i++) {
-          for (int j = 0; j < image[i].length; j++) {
-            for (int k = 0; k < image[i][j].length; k++) {
-              output[i][j][k] = (image[i][j][0] + image[i][j][1] + image[i][j][2]) / 3;
-            }
-          }
-        }
-        break;
-      case Luma:
-        for (int i = 0; i < image.length; i++) {
-          for (int j = 0; j < image[i].length; j++) {
-            for (int k = 0; k < image[i][j].length; k++) {
-              output[i][j][k] = (int) (0.2126 * image[i][j][0] + 0.7152 * image[i][j][1] + 0.0722
-                      * image[i][j][2]);
-            }
-          }
-        }
-        break;
-      default:
-        output = image;
-        break;
+      }
     }
 
     images.put(out, output);
@@ -274,10 +221,11 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
   }
 
   @Override
-  public void filter(String in, String out, double[][] filter)
+  public void filter(String in, String out, Filters mode)
           throws IllegalArgumentException {
     int[][][] image = images.get(in);
     int max = maxValue.get(in);
+    double[][] filter = getFilter(mode);
 
     if (image == null) {
       throw new IllegalArgumentException("Image name is invalid");
@@ -292,6 +240,25 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
 
     images.put(out, output);
     maxValue.put(out, max);
+  }
+
+  private double[][] getFilter(Filters mode) {
+    switch(mode) {
+      case Blur:
+        return new double[][]{
+                {0.0625, 0.125, 0.0625},
+                {0.125, 0.25, 0.125},
+                {0.0625, 0.125, 0.0625}};
+      case Sharpen:
+        return new double[][]{
+                {-0.125, -0.125, -0.125, -0.125, -0.125},
+                {-0.125, 0.25, 0.25, 0.25, -0.125},
+                {-0.125, 0.25, 1, 0.25, -0.125},
+                {-0.125, 0.25, 0.25, 0.25, -0.125},
+                {-0.125, -0.125, -0.125, -0.125, -0.125}};
+      default:
+        return new double[][]{{1.0}};
+    }
   }
 
   private void filterPixel(int[][][] in, int[][][] out, int x, int y, int max, double[][] filter) {
@@ -323,10 +290,12 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
   }
 
   @Override
-  public void transform(String in, String out, double[][] transform)
+  public void transform(String in, String out, Transforms mode)
           throws IllegalArgumentException {
     int[][][] image = images.get(in);
     int max = maxValue.get(in);
+    double[][] transform = getTransform(mode);
+
     if (image == null) {
       throw new IllegalArgumentException("Image name is invalid");
     }
@@ -339,6 +308,46 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
     }
     images.put(out, output);
     maxValue.put(out, max);
+  }
+
+  private double[][] getTransform(Transforms mode) {
+    switch (mode) {
+      case ValueR:
+        return new double[][]{
+                {1.0, 0.0, 0.0},
+                {1.0, 0.0, 0.0},
+                {1.0, 0.0, 0.0}};
+      case ValueG:
+        return new double[][]{
+                {0.0, 1.0, 0.0},
+                {0.0, 1.0, 0.0},
+                {0.0, 1.0, 0.0}};
+      case ValueB:
+        return new double[][]{
+                {0.0, 0.0, 1.0},
+                {0.0, 0.0, 1.0},
+                {0.0, 0.0, 1.0}};
+      case Intensity:
+        return new double[][]{
+                {0.3333, 0.3333, 0.3333},
+                {0.3333, 0.3333, 0.3333},
+                {0.3333, 0.3333, 0.3333}};
+      case Luma:
+        return new double[][]{
+                {0.2126, 0.7152, 0.0722},
+                {0.2126, 0.7152, 0.0722},
+                {0.2126, 0.7152, 0.0722}};
+      case Sepia:
+        return new double[][]{
+              {0.393, 0.769, 0.189},
+              {0.349, 0.686, 0.168},
+              {0.272, 0.534, 0.131}};
+      default:
+        return new double[][]{
+                {1.0, 0.0, 0.0},
+                {0.0, 1.0, 0.0},
+                {0.0, 0.0, 1.0}};
+    }
   }
 
   private void transformPixel(int[][][] in, int[][][] out, int x, int y, int max, double[][] transform) {

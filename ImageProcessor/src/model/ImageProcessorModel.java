@@ -35,11 +35,9 @@ public interface ImageProcessorModel {
   void flipHorizontal(String in, String out);
 
   /**
-   * Makes the image black and white by the given mode.
-   *
-   * @param mode The mode in which the greyscale is done by
+   * Makes the image black and white by the highest RGB value in a pixel.
    */
-  void greyscale(String in, String out, ComponentMode mode);
+  void value(String in, String out);
 
   /**
    * Applies the given filter to the image
@@ -47,7 +45,7 @@ public interface ImageProcessorModel {
    * @param out    the name to save the modified image as
    * @param filter the filter to apply to each pixel
    */
-  void filter(String in, String out, double[][] filter);
+  void filter(String in, String out, Filters filter);
 
   /**
    * Applies the given color transformation to the image
@@ -55,18 +53,25 @@ public interface ImageProcessorModel {
    * @param out       the name to save the modified image as
    * @param transform the color transformation to apply to each pixel
    */
-  void transform(String in, String out, double[][] transform);
+  void transform(String in, String out, Transforms transform);
 
   /**
-   * This enum represents the possible mode for component. The mode can be
-   * either by red value, green value, blue value, intensity, or Luma.
+   * This enum represents the possible mode for color transform.
    */
-  enum ComponentMode {
-    Value,
+  enum Filters {
+    Blur,
+    Sharpen
+  }
+
+  /**
+   * This enum represents the possible mode for color transform.
+   */
+  enum Transforms {
     ValueR,
     ValueG,
     ValueB,
     Intensity,
     Luma,
+    Sepia
   }
 }
