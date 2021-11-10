@@ -1,12 +1,17 @@
 import org.junit.Before;
 import org.junit.Test;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+
+import javax.imageio.ImageIO;
 
 import controller.ImageProcessorController;
 import controller.ImageProcessorControllerImpl;
@@ -15,6 +20,7 @@ import model.ImageProcessorModelImpl;
 import view.ImageProcessorView;
 import view.ImageProcessorViewImpl;
 
+import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -55,8 +61,8 @@ public class ImageProcessorControllerImplTest {
   private String getBodyLog(StringBuilder log) {
     StringBuilder actualBuilder = new StringBuilder();
     String[] outputArr = log.toString().split(System.lineSeparator());
-    actualBuilder.append(outputArr[15]);
-    for (int i = 16; i < outputArr.length - 1; i++) {
+    actualBuilder.append(outputArr[18]);
+    for (int i = 19; i < outputArr.length - 1; i++) {
       actualBuilder.append("\n").append(outputArr[i]);
     }
     return actualBuilder.toString();
@@ -126,6 +132,10 @@ public class ImageProcessorControllerImplTest {
             "(greyscale the image by the average value)\n" +
             "View: Rendering message: luma image-name dest-image-name " +
             "(greyscale the image by luma value)\n" +
+            "View: Rendering message: blur image-name dest-image-name (blurs the image)\n" +
+            "View: Rendering message: sharpen image-name dest-image-name (sharpens the image)\n" +
+            "View: Rendering message: sepia image-name dest-image-name " +
+            "(applies sepia filter on the image)\n" +
             "View: Rendering message: menu (shows all the available supported instructions)\n" +
             "View: Rendering message: q or quit (quits the processor)\n" +
             "View: Rendering message: Thank you for using this program!";
@@ -153,7 +163,7 @@ public class ImageProcessorControllerImplTest {
 
     StringBuilder actualBuilder = new StringBuilder();
     String[] outputArr = log.toString().split(System.lineSeparator());
-    actualBuilder.append(outputArr[15]);
+    actualBuilder.append(outputArr[18]);
     String actual = actualBuilder.toString();
 
     assertEquals(expected, actual);
@@ -185,6 +195,10 @@ public class ImageProcessorControllerImplTest {
             "(greyscale the image by the average value)\n" +
             "View: Rendering message: luma image-name dest-image-name " +
             "(greyscale the image by luma value)\n" +
+            "View: Rendering message: blur image-name dest-image-name (blurs the image)\n" +
+            "View: Rendering message: sharpen image-name dest-image-name (sharpens the image)\n" +
+            "View: Rendering message: sepia image-name dest-image-name " +
+            "(applies sepia filter on the image)\n" +
             "View: Rendering message: menu (shows all the available supported instructions)\n" +
             "View: Rendering message: q or quit (quits the processor)";
 
@@ -192,8 +206,8 @@ public class ImageProcessorControllerImplTest {
 
     StringBuilder actualBuilder = new StringBuilder();
     String[] outputArr = log.toString().split(System.lineSeparator());
-    actualBuilder.append(outputArr[15]);
-    for (int i = 16; i < outputArr.length - 1; i++) {
+    actualBuilder.append(outputArr[18]);
+    for (int i = 19; i < outputArr.length - 1; i++) {
       actualBuilder.append("\n").append(outputArr[i]);
     }
     String actual = actualBuilder.toString();
@@ -215,12 +229,12 @@ public class ImageProcessorControllerImplTest {
 
   @Test
   public void testInvalidValidCommand() {
-    setInput("invalid load image.ppm name q");
+    setInput("invalid load res/pix.ppm name q");
     ImageProcessorController controller =
             new ImageProcessorControllerImpl(mockModel, mockView, read);
     String expected = "View: Rendering message: Given command is invalid!\n" +
-            "Model: Loading image \"image.ppm\" as: name\n" +
-            "View: Rendering message: Successfully loaded image.ppm as name.";
+            "Model: Received image from controller as: name\n" +
+            "View: Rendering message: Successfully loaded res/pix.ppm as name.";
 
     controller.startProcessor();
     String actual = getBodyLog(log);
@@ -229,11 +243,11 @@ public class ImageProcessorControllerImplTest {
 
   @Test
   public void testValidInvalid() {
-    setInput("load image.ppm name invalid q");
+    setInput("load res/pix.ppm name invalid q");
     ImageProcessorController controller =
             new ImageProcessorControllerImpl(mockModel, mockView, read);
-    String expected = "Model: Loading image \"image.ppm\" as: name\n" +
-            "View: Rendering message: Successfully loaded image.ppm as name.\n" +
+    String expected = "Model: Received image from controller as: name\n" +
+            "View: Rendering message: Successfully loaded res/pix.ppm as name.\n" +
             "View: Rendering message: Given command is invalid!";
 
     controller.startProcessor();
@@ -270,11 +284,11 @@ public class ImageProcessorControllerImplTest {
 
   @Test
   public void testLoadCmd() {
-    setInput("load image.ppm name q");
+    setInput("load res/pix.ppm name q");
     ImageProcessorController controller =
             new ImageProcessorControllerImpl(mockModel, mockView, read);
-    String expected = "Model: Loading image \"image.ppm\" as: name\n" +
-            "View: Rendering message: Successfully loaded image.ppm as name.";
+    String expected = "Model: Received image from controller as: name\n" +
+            "View: Rendering message: Successfully loaded res/pix.ppm as name.";
 
     controller.startProcessor();
     String actual = getBodyLog(log);
@@ -286,8 +300,7 @@ public class ImageProcessorControllerImplTest {
     setInput("load badName name q");
     ImageProcessorController controller =
             new ImageProcessorControllerImpl(mockModelBad, mockView, read);
-    String expected = "Model: Failed to find badName\n" +
-            "View: Rendering message: Given filename does not exist!";
+    String expected = "View: Rendering message: Failed to read from the path";
 
     controller.startProcessor();
     String actual = getBodyLog(log);
@@ -299,7 +312,7 @@ public class ImageProcessorControllerImplTest {
     setInput("save output.ppm name q");
     ImageProcessorController controller =
             new ImageProcessorControllerImpl(mockModel, mockView, read);
-    String expected = "Model: Saving image: name\n" +
+    String expected = "Model: Sending image: name\n" +
             "View: Rendering message: Successfully saved name at output.ppm.";
 
     controller.startProcessor();
@@ -339,7 +352,7 @@ public class ImageProcessorControllerImplTest {
     ImageProcessorController controller =
             new ImageProcessorControllerImpl(mockModelBad, mockView, read);
     String expected = "Model: in does not exist.\n" +
-            "View: Rendering message: Given filename does not exist!";
+            "View: Rendering message: Given image name does not exist!";
 
     controller.startProcessor();
     String actual = getBodyLog(log);
@@ -365,7 +378,7 @@ public class ImageProcessorControllerImplTest {
     ImageProcessorController controller =
             new ImageProcessorControllerImpl(mockModelBad, mockView, read);
     String expected = "Model: in does not exist.\n" +
-            "View: Rendering message: Given filename does not exist!";
+            "View: Rendering message: Given image name does not exist!";
 
     controller.startProcessor();
     String actual = getBodyLog(log);
@@ -391,7 +404,7 @@ public class ImageProcessorControllerImplTest {
     ImageProcessorController controller =
             new ImageProcessorControllerImpl(mockModelBad, mockView, read);
     String expected = "Model: in does not exist.\n" +
-            "View: Rendering message: Given filename does not exist!";
+            "View: Rendering message: Given image name does not exist!";
 
     controller.startProcessor();
     String actual = getBodyLog(log);
@@ -427,7 +440,7 @@ public class ImageProcessorControllerImplTest {
     setInput("value-component in out q");
     ImageProcessorController controller =
             new ImageProcessorControllerImpl(mockModel, mockView, read);
-    String expected = "Model: Greyscale: in by Value; saved as: out\n" +
+    String expected = "Model: Greyscale: in by max value; saved as: out\n" +
             "View: Rendering message: Successfully converted in.";
 
     controller.startProcessor();
@@ -441,7 +454,7 @@ public class ImageProcessorControllerImplTest {
     ImageProcessorController controller =
             new ImageProcessorControllerImpl(mockModelBad, mockView, read);
     String expected = "Model: in does not exist.\n" +
-            "View: Rendering message: Given filename does not exist!";
+            "View: Rendering message: Given image name does not exist!";
 
     controller.startProcessor();
     String actual = getBodyLog(log);
@@ -453,8 +466,8 @@ public class ImageProcessorControllerImplTest {
     setInput("red-component in out q");
     ImageProcessorController controller =
             new ImageProcessorControllerImpl(mockModel, mockView, read);
-    String expected = "Model: Greyscale: in by ValueR; saved as: out\n" +
-            "View: Rendering message: Successfully converted in.";
+    String expected = "Model: Applying ValueR color transform on: in; saved as: out\n" +
+            "View: Rendering message: Applied greyscale transform on in.";
 
     controller.startProcessor();
     String actual = getBodyLog(log);
@@ -467,7 +480,7 @@ public class ImageProcessorControllerImplTest {
     ImageProcessorController controller =
             new ImageProcessorControllerImpl(mockModelBad, mockView, read);
     String expected = "Model: in does not exist.\n" +
-            "View: Rendering message: Given filename does not exist!";
+            "View: Rendering message: Given image name does not exist!";
 
     controller.startProcessor();
     String actual = getBodyLog(log);
@@ -479,8 +492,8 @@ public class ImageProcessorControllerImplTest {
     setInput("green-component in out q");
     ImageProcessorController controller =
             new ImageProcessorControllerImpl(mockModel, mockView, read);
-    String expected = "Model: Greyscale: in by ValueG; saved as: out\n" +
-            "View: Rendering message: Successfully converted in.";
+    String expected = "Model: Applying ValueG color transform on: in; saved as: out\n" +
+            "View: Rendering message: Applied greyscale transform on in.";
 
     controller.startProcessor();
     String actual = getBodyLog(log);
@@ -493,7 +506,7 @@ public class ImageProcessorControllerImplTest {
     ImageProcessorController controller =
             new ImageProcessorControllerImpl(mockModelBad, mockView, read);
     String expected = "Model: in does not exist.\n" +
-            "View: Rendering message: Given filename does not exist!";
+            "View: Rendering message: Given image name does not exist!";
 
     controller.startProcessor();
     String actual = getBodyLog(log);
@@ -505,8 +518,8 @@ public class ImageProcessorControllerImplTest {
     setInput("blue-component in out q");
     ImageProcessorController controller =
             new ImageProcessorControllerImpl(mockModel, mockView, read);
-    String expected = "Model: Greyscale: in by ValueB; saved as: out\n" +
-            "View: Rendering message: Successfully converted in.";
+    String expected = "Model: Applying ValueB color transform on: in; saved as: out\n" +
+            "View: Rendering message: Applied greyscale transform on in.";
 
     controller.startProcessor();
     String actual = getBodyLog(log);
@@ -519,7 +532,7 @@ public class ImageProcessorControllerImplTest {
     ImageProcessorController controller =
             new ImageProcessorControllerImpl(mockModelBad, mockView, read);
     String expected = "Model: in does not exist.\n" +
-            "View: Rendering message: Given filename does not exist!";
+            "View: Rendering message: Given image name does not exist!";
 
     controller.startProcessor();
     String actual = getBodyLog(log);
@@ -531,8 +544,8 @@ public class ImageProcessorControllerImplTest {
     setInput("intensity in out q");
     ImageProcessorController controller =
             new ImageProcessorControllerImpl(mockModel, mockView, read);
-    String expected = "Model: Greyscale: in by Intensity; saved as: out\n" +
-            "View: Rendering message: Successfully converted in.";
+    String expected = "Model: Applying Intensity color transform on: in; saved as: out\n" +
+            "View: Rendering message: Applied greyscale transform on in.";
 
     controller.startProcessor();
     String actual = getBodyLog(log);
@@ -545,7 +558,7 @@ public class ImageProcessorControllerImplTest {
     ImageProcessorController controller =
             new ImageProcessorControllerImpl(mockModelBad, mockView, read);
     String expected = "Model: in does not exist.\n" +
-            "View: Rendering message: Given filename does not exist!";
+            "View: Rendering message: Given image name does not exist!";
 
     controller.startProcessor();
     String actual = getBodyLog(log);
@@ -557,8 +570,8 @@ public class ImageProcessorControllerImplTest {
     setInput("luma in out q");
     ImageProcessorController controller =
             new ImageProcessorControllerImpl(mockModel, mockView, read);
-    String expected = "Model: Greyscale: in by Luma; saved as: out\n" +
-            "View: Rendering message: Successfully converted in.";
+    String expected = "Model: Applying Luma color transform on: in; saved as: out\n" +
+            "View: Rendering message: Applied greyscale transform on in.";
 
     controller.startProcessor();
     String actual = getBodyLog(log);
@@ -571,7 +584,7 @@ public class ImageProcessorControllerImplTest {
     ImageProcessorController controller =
             new ImageProcessorControllerImpl(mockModelBad, mockView, read);
     String expected = "Model: in does not exist.\n" +
-            "View: Rendering message: Given filename does not exist!";
+            "View: Rendering message: Given image name does not exist!";
 
     controller.startProcessor();
     String actual = getBodyLog(log);
@@ -580,25 +593,25 @@ public class ImageProcessorControllerImplTest {
 
   @Test
   public void testSequence1() {
-    setInput("load image.ppm name invalid luma name out vflip name out " +
+    setInput("load res/pix.ppm name invalid luma name out vflip name out " +
             "brighten 40 name out hflip name out value-component name out " +
             "save out.ppm out q");
     ImageProcessorController controller =
             new ImageProcessorControllerImpl(mockModel, mockView, read);
-    String expected = "Model: Loading image \"image.ppm\" as: name\n" +
-            "View: Rendering message: Successfully loaded image.ppm as name.\n" +
+    String expected = "Model: Received image from controller as: name\n" +
+            "View: Rendering message: Successfully loaded res/pix.ppm as name.\n" +
             "View: Rendering message: Given command is invalid!\n" +
-            "Model: Greyscale: name by Luma; saved as: out\n" +
-            "View: Rendering message: Successfully converted name.\n" +
+            "Model: Applying Luma color transform on: name; saved as: out\n" +
+            "View: Rendering message: Applied greyscale transform on name.\n" +
             "Model: Flipping: name over the x-axis; saved as: out\n" +
             "View: Rendering message: Flipped name over the x-axis.\n" +
             "Model: Changing brightness of: name, by 40; saved as: out\n" +
             "View: Rendering message: Changed brightness of name by 40\n" +
             "Model: Flipping: name over the y-axis; saved as: out\n" +
             "View: Rendering message: Flipped name over the y-axis.\n" +
-            "Model: Greyscale: name by Value; saved as: out\n" +
+            "Model: Greyscale: name by max value; saved as: out\n" +
             "View: Rendering message: Successfully converted name.\n" +
-            "Model: Saving image: out\n" +
+            "Model: Sending image: out\n" +
             "View: Rendering message: Successfully saved out at out.ppm.";
     controller.startProcessor();
     String actual = getBodyLog(log);
@@ -607,32 +620,32 @@ public class ImageProcessorControllerImplTest {
 
   @Test
   public void testSequence2() {
-    setInput("load image.ppm name invalid vflip name out hflip out out save out1.ppm out " +
-            "intensity out out load image2.ppm name2 red-component name2 out2 brighten " +
+    setInput("load res/pix.ppm name invalid vflip name out hflip out out save out1.ppm out " +
+            "intensity out out load res/pix.ppm name2 red-component name2 out2 brighten " +
             "-10 out2 out2 invalid save out.ppm out save out2.ppm out2 q");
     ImageProcessorController controller =
             new ImageProcessorControllerImpl(mockModel, mockView, read);
-    String expected = "Model: Loading image \"image.ppm\" as: name\n" +
-            "View: Rendering message: Successfully loaded image.ppm as name.\n" +
+    String expected = "Model: Received image from controller as: name\n" +
+            "View: Rendering message: Successfully loaded res/pix.ppm as name.\n" +
             "View: Rendering message: Given command is invalid!\n" +
             "Model: Flipping: name over the x-axis; saved as: out\n" +
             "View: Rendering message: Flipped name over the x-axis.\n" +
             "Model: Flipping: out over the y-axis; saved as: out\n" +
             "View: Rendering message: Flipped out over the y-axis.\n" +
-            "Model: Saving image: out\n" +
+            "Model: Sending image: out\n" +
             "View: Rendering message: Successfully saved out at out1.ppm.\n" +
-            "Model: Greyscale: out by Intensity; saved as: out\n" +
-            "View: Rendering message: Successfully converted out.\n" +
-            "Model: Loading image \"image2.ppm\" as: name2\n" +
-            "View: Rendering message: Successfully loaded image2.ppm as name2.\n" +
-            "Model: Greyscale: name2 by ValueR; saved as: out2\n" +
-            "View: Rendering message: Successfully converted name2.\n" +
+            "Model: Applying Intensity color transform on: out; saved as: out\n" +
+            "View: Rendering message: Applied greyscale transform on out.\n" +
+            "Model: Received image from controller as: name2\n" +
+            "View: Rendering message: Successfully loaded res/pix.ppm as name2.\n" +
+            "Model: Applying ValueR color transform on: name2; saved as: out2\n" +
+            "View: Rendering message: Applied greyscale transform on name2.\n" +
             "Model: Changing brightness of: out2, by -10; saved as: out2\n" +
             "View: Rendering message: Changed brightness of out2 by -10\n" +
             "View: Rendering message: Given command is invalid!\n" +
-            "Model: Saving image: out\n" +
+            "Model: Sending image: out\n" +
             "View: Rendering message: Successfully saved out at out.ppm.\n" +
-            "Model: Saving image: out2\n" +
+            "Model: Sending image: out2\n" +
             "View: Rendering message: Successfully saved out2 at out2.ppm.";
     controller.startProcessor();
     String actual = getBodyLog(log);
@@ -640,19 +653,18 @@ public class ImageProcessorControllerImplTest {
   }
 
   @Test
-  public void testSave() {
+  public void testSavePPM() {
     setInput("save res/controllerSaveTest.ppm name q");
-    ImageProcessorModel saveMock = new ImageProcessorModelMock(log, 2);
     ImageProcessorController controller =
-            new ImageProcessorControllerImpl(saveMock, mockView, read);
-    String expected = "Model: Saving a set 2x2 image\n" +
+            new ImageProcessorControllerImpl(mockModel, mockView, read);
+    String expected = "Model: Sending image: name\n" +
             "View: Rendering message: Successfully saved name at res/controllerSaveTest.ppm.";
 
     controller.startProcessor();
     String actual = getBodyLog(log);
     assertEquals(expected, actual);
 
-    String expectedImage = "P3\n2 2\n255\n60\n60\n60\n120\n120\n120\n180\n180\n180\n240\n240\n240";
+    String expectedImage = "ppm image";
     String actualImage = "";
     try {
       actualImage = Files.readString(Paths.get("res/controllerSaveTest.ppm"));
@@ -663,8 +675,235 @@ public class ImageProcessorControllerImplTest {
   }
 
   @Test
+  public void testSavePPMOverwrite() {
+    setInput("save res/controllerSaveTest.ppm name q");
+    ImageProcessorModel saveMock = new ImageProcessorModelMock(log, 2);
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModel, mockView, read);
+    String expected = "Model: Sending image: name\n" +
+            "View: Rendering message: Successfully saved name at res/controllerSaveTest.ppm.";
+
+    controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+
+    String expectedImage = "ppm image";
+    String actualImage = "";
+    try {
+      actualImage = Files.readString(Paths.get("res/controllerSaveTest.ppm"));
+    } catch (IOException e) {
+      fail();
+    }
+    assertEquals(expectedImage, actualImage);
+
+    setInput("save res/controllerSaveTest.ppm name q");
+    controller = new ImageProcessorControllerImpl(saveMock, mockView, read);
+    expected = "Model: Sending image 2: name\n" +
+            "View: Rendering message: Successfully saved name at res/controllerSaveTest.ppm.";
+
+    controller.startProcessor();
+
+    StringBuilder actualBuilder = new StringBuilder();
+    String[] outputArr = log.toString().split(System.lineSeparator());
+    actualBuilder.append(outputArr[38]);
+    for (int i = 39; i < outputArr.length - 1; i++) {
+      actualBuilder.append("\n").append(outputArr[i]);
+    }
+    actual = actualBuilder.toString();
+    assertEquals(expected, actual);
+
+    expectedImage = "ppm image overwrite";
+    actualImage = "";
+    try {
+      actualImage = Files.readString(Paths.get("res/controllerSaveTest.ppm"));
+    } catch (IOException e) {
+      fail();
+    }
+    assertEquals(expectedImage, actualImage);
+  }
+
+  @Test
+  public void testSavePNG() {
+    setInput("save res/controllerSaveTest.png name q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModel, mockView, read);
+    String expected = "Model: Sending image: name\n" +
+            "View: Rendering message: Successfully saved name at res/controllerSaveTest.png.";
+
+    controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+
+    BufferedImage expectedImage = new BufferedImage(400, 300, TYPE_INT_RGB);
+    expectedImage.setRGB(21, 52, new Color(25, 50, 75).getRGB());
+    BufferedImage actualImage = null;
+    try {
+      actualImage = ImageIO.read(new FileInputStream("res/controllerSaveTest.png"));
+    } catch (IOException e) {
+      fail();
+    }
+    assertEquals(expectedImage.getHeight(), actualImage.getHeight());
+    assertEquals(expectedImage.getWidth(), actualImage.getWidth());
+    for (int x = 0; x < 400; x ++) {
+      for (int y = 0; y < 300; y ++) {
+        assertEquals(expectedImage.getRGB(x, y), actualImage.getRGB(x, y));
+      }
+    }
+  }
+
+  @Test
+  public void testSavePNGOverwrite() {
+    setInput("save res/controllerSaveTest.png name q");
+    ImageProcessorModel saveMock = new ImageProcessorModelMock(log, 2);
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModel, mockView, read);
+    String expected = "Model: Sending image: name\n" +
+            "View: Rendering message: Successfully saved name at res/controllerSaveTest.png.";
+
+    controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+
+    BufferedImage expectedImage = new BufferedImage(400, 300, TYPE_INT_RGB);
+    expectedImage.setRGB(21, 52, new Color(25, 50, 75).getRGB());
+    BufferedImage actualImage = null;
+    try {
+      actualImage = ImageIO.read(new FileInputStream("res/controllerSaveTest.png"));
+    } catch (IOException e) {
+      fail();
+    }
+    assertEquals(expectedImage.getHeight(), actualImage.getHeight());
+    assertEquals(expectedImage.getWidth(), actualImage.getWidth());
+    for (int x = 0; x < 400; x ++) {
+      for (int y = 0; y < 300; y ++) {
+        assertEquals(expectedImage.getRGB(x, y), actualImage.getRGB(x, y));
+      }
+    }
+
+    setInput("save res/controllerSaveTest.png name q");
+    controller = new ImageProcessorControllerImpl(saveMock, mockView, read);
+    expected = "Model: Sending image 2: name\n" +
+            "View: Rendering message: Successfully saved name at res/controllerSaveTest.png.";
+
+    controller.startProcessor();
+    StringBuilder actualBuilder = new StringBuilder();
+    String[] outputArr = log.toString().split(System.lineSeparator());
+    actualBuilder.append(outputArr[38]);
+    for (int i = 39; i < outputArr.length - 1; i++) {
+      actualBuilder.append("\n").append(outputArr[i]);
+    }
+    actual = actualBuilder.toString();
+    assertEquals(expected, actual);
+
+    expectedImage = new BufferedImage(300, 400, TYPE_INT_RGB);
+    expectedImage.setRGB(21, 52, new Color(24, 51, 76).getRGB());
+    actualImage = null;
+    try {
+      actualImage = ImageIO.read(new FileInputStream("res/controllerSaveTest.png"));
+    } catch (IOException e) {
+      fail();
+    }
+    assertEquals(expectedImage.getHeight(), actualImage.getHeight());
+    assertEquals(expectedImage.getWidth(), actualImage.getWidth());
+    for (int x = 0; x < 300; x ++) {
+      for (int y = 0; y < 400; y ++) {
+        assertEquals(expectedImage.getRGB(x, y), actualImage.getRGB(x, y));
+      }
+    }
+  }
+
+  @Test
+  public void testSaveJPG() {
+    setInput("save res/controllerSaveTest.jpg name q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModel, mockView, read);
+    String expected = "Model: Sending image: name\n" +
+            "View: Rendering message: Successfully saved name at res/controllerSaveTest.jpg.";
+
+    controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+
+    BufferedImage expectedImage = new BufferedImage(400, 300, TYPE_INT_RGB);
+    expectedImage.setRGB(21, 52, new Color(25, 50, 75).getRGB());
+
+    BufferedImage actualImage = null;
+    try {
+      actualImage = ImageIO.read(new FileInputStream("res/controllerSaveTest.jpg"));
+    } catch (IOException e) {
+      fail();
+    }
+    assertEquals(expectedImage.getHeight(), actualImage.getHeight());
+    assertEquals(expectedImage.getWidth(), actualImage.getWidth());
+    // Since jpg is lossy, it is impossible to compare pixel by pixel; so we assume or check
+    // through the actual image file
+    assertEquals(expectedImage.getRGB(0, 0), actualImage.getRGB(0, 0));
+  }
+
+  @Test
+  public void testSaveJPGOverwrite() {
+    setInput("save res/controllerSaveTest.jpg name q");
+    ImageProcessorModel saveMock = new ImageProcessorModelMock(log, 2);
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModel, mockView, read);
+    String expected = "Model: Sending image: name\n" +
+            "View: Rendering message: Successfully saved name at res/controllerSaveTest.jpg.";
+
+    controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+
+    BufferedImage expectedImage = new BufferedImage(400, 300, TYPE_INT_RGB);
+    expectedImage.setRGB(21, 52, new Color(25, 50, 75).getRGB());
+    BufferedImage actualImage = null;
+    try {
+      actualImage = ImageIO.read(new FileInputStream("res/controllerSaveTest.jpg"));
+    } catch (IOException e) {
+      fail();
+    }
+    assertEquals(expectedImage.getHeight(), actualImage.getHeight());
+    assertEquals(expectedImage.getWidth(), actualImage.getWidth());
+    for (int x = 0; x < 400; x ++) {
+      for (int y = 0; y < 300; y ++) {
+        assertEquals(""+x+","+y, expectedImage.getRGB(x, y), actualImage.getRGB(x, y));
+      }
+    }
+
+    setInput("save res/controllerSaveTest.jpg name q");
+    controller = new ImageProcessorControllerImpl(saveMock, mockView, read);
+    expected = "Model: Sending image 2: name\n" +
+            "View: Rendering message: Successfully saved name at res/controllerSaveTest.jpg.";
+
+    controller.startProcessor();
+    StringBuilder actualBuilder = new StringBuilder();
+    String[] outputArr = log.toString().split(System.lineSeparator());
+    actualBuilder.append(outputArr[38]);
+    for (int i = 39; i < outputArr.length - 1; i++) {
+      actualBuilder.append("\n").append(outputArr[i]);
+    }
+    actual = actualBuilder.toString();
+    assertEquals(expected, actual);
+
+    expectedImage = new BufferedImage(300, 400, TYPE_INT_RGB);
+    expectedImage.setRGB(21, 52, new Color(24, 51, 76).getRGB());
+    actualImage = null;
+    try {
+      actualImage = ImageIO.read(new FileInputStream("res/controllerSaveTest.jpg"));
+    } catch (IOException e) {
+      fail();
+    }
+    assertEquals(expectedImage.getHeight(), actualImage.getHeight());
+    assertEquals(expectedImage.getWidth(), actualImage.getWidth());
+    for (int x = 0; x < 300; x ++) {
+      for (int y = 0; y < 400; y ++) {
+        assertEquals(expectedImage.getRGB(x, y), actualImage.getRGB(x, y));
+      }
+    }
+  }
+
+  @Test
   public void testBadReadable() {
-    setInput("load image.ppm name");
+    setInput("load res/pix.ppm name");
     Readable badRead = new ReadableMock();
     ImageProcessorController controller =
             new ImageProcessorControllerImpl(mockModel, mockView, badRead);
@@ -673,7 +912,7 @@ public class ImageProcessorControllerImplTest {
     controller.startProcessor();
     StringBuilder actualBuilder = new StringBuilder();
     String[] outputArr = log.toString().split(System.lineSeparator());
-    for (int i = 15; i < outputArr.length - 1; i++) {
+    for (int i = 18; i < outputArr.length - 1; i++) {
       actualBuilder.append("\n").append(outputArr[i]);
     }
     String actual = actualBuilder.toString();

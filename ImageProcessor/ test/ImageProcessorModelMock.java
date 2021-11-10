@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 import model.ImageProcessorModel;
@@ -51,9 +52,16 @@ public class ImageProcessorModelMock implements ImageProcessorModel {
       log.append("Model: ").append(imageName)
               .append(" does not exist.").append(System.lineSeparator());
       throw new IllegalArgumentException("Error in save");
+    } else if (this.mode == 2) {
+      log.append("Model: Sending image 2: ").append(imageName).append(System.lineSeparator());
+      BufferedImage image = new BufferedImage(300, 400, TYPE_INT_RGB);
+      image.setRGB(21, 52, new Color(24, 51, 76).getRGB());
+      return image;
     }
+
     log.append("Model: Sending image: ").append(imageName).append(System.lineSeparator());
-    BufferedImage image = new BufferedImage(300, 400, TYPE_INT_RGB);
+    BufferedImage image = new BufferedImage(400, 300, TYPE_INT_RGB);
+    image.setRGB(21, 52, new Color(25, 50, 75).getRGB());
     return image;
   }
 
@@ -63,6 +71,9 @@ public class ImageProcessorModelMock implements ImageProcessorModel {
       log.append("Model: ").append(imageName)
               .append(" does not exist.").append(System.lineSeparator());
       throw new IllegalArgumentException("Error in save");
+    } else if (this.mode == 2) {
+      log.append("Model: Sending image 2: ").append(imageName).append(System.lineSeparator());
+      return "ppm image overwrite";
     }
     log.append("Model: Sending image: ").append(imageName).append(System.lineSeparator());
     return "ppm image";
@@ -117,9 +128,9 @@ public class ImageProcessorModelMock implements ImageProcessorModel {
     if (this.mode == 1) {
       log.append("Model: ").append(in)
               .append(" does not exist.").append(System.lineSeparator());
-      throw new IllegalArgumentException("Error in flipHorizontal");
+      throw new IllegalArgumentException("Error in filter");
     }
-    log.append("Model: Applying ").append(mode.toString()).append(" filter on: ").append(in)
+    log.append("Model: Applying ").append(mode).append(" filter on: ").append(in)
             .append("; saved as: ").append(out).append(System.lineSeparator());
   }
 
@@ -128,9 +139,9 @@ public class ImageProcessorModelMock implements ImageProcessorModel {
     if (this.mode == 1) {
       log.append("Model: ").append(in)
               .append(" does not exist.").append(System.lineSeparator());
-      throw new IllegalArgumentException("Error in flipHorizontal");
+      throw new IllegalArgumentException("Error in transform");
     }
-    log.append("Model: Applying color transform on: ").append(in)
+    log.append("Model: Applying ").append(mode).append(" color transform on: ").append(in)
             .append("; saved as: ").append(out).append(System.lineSeparator());
   }
 }
