@@ -121,8 +121,9 @@ public class ImageProcessorModelImplTest {
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void nullGreyscale() {
-    model.transform("DoesntExist", "Haha", ImageProcessorModel.Transforms.ValueR);
+  public void nulltransform() {
+    resetModel();
+    model.transform("DoesntExist", "Haha", ImageProcessorModel.Transforms.Luma);
   }
 
   @Test
@@ -180,13 +181,12 @@ public class ImageProcessorModelImplTest {
     assertEquals(model.savePPM("Test"), pixHorizontal);
   }
 
-  /*
   @Test
   public void testGreyValue() {
     resetModel();
 
-    model.greyscale("Test", "TestOut", ImageProcessorModel.ComponentMode.Value);
-    model.greyscale("Test", "Test", ImageProcessorModel.ComponentMode.Value);
+    model.value("Test", "TestOut");
+    model.value("Test", "Test");
     assertEquals(model.savePPM("TestOut"), pixGreyValue);
     assertEquals(model.savePPM("Test"), pixGreyValue);
   }
@@ -195,8 +195,8 @@ public class ImageProcessorModelImplTest {
   public void testGreyR() {
     resetModel();
 
-    model.greyscale("Test", "TestOut", ImageProcessorModel.ComponentMode.ValueR);
-    model.greyscale("Test", "Test", ImageProcessorModel.ComponentMode.ValueR);
+    model.transform("Test", "TestOut", ImageProcessorModel.Transforms.ValueR);
+    model.transform("Test", "Test", ImageProcessorModel.Transforms.ValueR);
     assertEquals(model.savePPM("TestOut"), pixGreyR);
     assertEquals(model.savePPM("Test"), pixGreyR);
   }
@@ -205,8 +205,8 @@ public class ImageProcessorModelImplTest {
   public void testGreyG() {
     resetModel();
 
-    model.greyscale("Test", "TestOut", ImageProcessorModel.ComponentMode.ValueG);
-    model.greyscale("Test", "Test", ImageProcessorModel.ComponentMode.ValueG);
+    model.transform("Test", "TestOut", ImageProcessorModel.Transforms.ValueG);
+    model.transform("Test", "Test", ImageProcessorModel.Transforms.ValueG);
     assertEquals(model.savePPM("TestOut"), pixGreyG);
     assertEquals(model.savePPM("Test"), pixGreyG);
   }
@@ -215,8 +215,8 @@ public class ImageProcessorModelImplTest {
   public void testGreyB() {
     resetModel();
 
-    model.greyscale("Test", "TestOut", ImageProcessorModel.ComponentMode.ValueB);
-    model.greyscale("Test", "Test", ImageProcessorModel.ComponentMode.ValueB);
+    model.transform("Test", "TestOut", ImageProcessorModel.Transforms.ValueB);
+    model.transform("Test", "Test", ImageProcessorModel.Transforms.ValueB);
     assertEquals(model.savePPM("TestOut"), pixGreyB);
     assertEquals(model.savePPM("Test"), pixGreyB);
   }
@@ -225,8 +225,8 @@ public class ImageProcessorModelImplTest {
   public void testGreyIntensity() {
     resetModel();
 
-    model.greyscale("Test", "TestOut", ImageProcessorModel.ComponentMode.Intensity);
-    model.greyscale("Test", "Test", ImageProcessorModel.ComponentMode.Intensity);
+    model.transform("Test", "TestOut", ImageProcessorModel.Transforms.Intensity);
+    model.transform("Test", "Test", ImageProcessorModel.Transforms.Intensity);
     assertEquals(model.savePPM("TestOut"), pixGreyIntensity);
     assertEquals(model.savePPM("Test"), pixGreyIntensity);
   }
@@ -235,12 +235,11 @@ public class ImageProcessorModelImplTest {
   public void testGreyLuma() {
     resetModel();
 
-    model.greyscale("Test", "TestOut", ImageProcessorModel.ComponentMode.Luma);
-    model.greyscale("Test", "Test", ImageProcessorModel.ComponentMode.Luma);
+    model.transform("Test", "TestOut", ImageProcessorModel.Transforms.Luma);
+    model.transform("Test", "Test", ImageProcessorModel.Transforms.Luma);
     assertEquals(model.savePPM("TestOut"), pixGreyLuma);
     assertEquals(model.savePPM("Test"), pixGreyLuma);
   }
-  */
 
   @Test
   public void testVerticalHorizontal() {
