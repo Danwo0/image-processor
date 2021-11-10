@@ -1,9 +1,12 @@
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+
+import javax.imageio.ImageIO;
 
 import model.ImageProcessorModel;
 import model.ImageProcessorModelImpl;
@@ -31,6 +34,8 @@ public class ImageProcessorModelImplTest {
   private String pixVerticalHorizontal;
   private String pixHorizontalVertical;
 
+  private String clown;
+
   @Before
   public void setUp() {
     model = new ImageProcessorModelImpl();
@@ -50,6 +55,7 @@ public class ImageProcessorModelImplTest {
       pixGreyIntensity = Files.readString(Paths.get("ImageProcessor/res/pixGreyIntensity.ppm"));
       pixVerticalHorizontal = Files.readString(Paths.get("ImageProcessor/res/pixVerticalHorizontal.ppm"));
       pixHorizontalVertical = Files.readString(Paths.get("ImageProcessor/res/pixHorizontalVertical.ppm"));
+      clown = Files.readString(Paths.get("ImageProcessor/res/clown.ppm"));
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -257,5 +263,19 @@ public class ImageProcessorModelImplTest {
     model.flipHorizontal("Test", "Test");
     model.flipVertical("Test", "Test");
     assertEquals(model.savePPM("Test"), pixHorizontalVertical);
+  }
+
+  @Test
+  public void loadPNG() {
+    resetModel();
+
+    try {
+      model.loadImage(ImageIO.read(new FileInputStream("ImageProcessor/res/clown.png")),
+              "Test");
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    assertEquals(model.savePPM("Test"), clown);
   }
 }
