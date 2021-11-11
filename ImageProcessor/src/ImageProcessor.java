@@ -28,20 +28,16 @@ public class ImageProcessor {
 
     if (args.length == 0) {
       controller = new ImageProcessorControllerImpl(model, view, new InputStreamReader(System.in));
-    } else if (args.length > 1) {
+    } else if (args.length > 1 && args[0].equalsIgnoreCase("-file")) {
       InputStreamReader input;
-      String fileName;
       String script;
 
       try {
-        fileName = Files.readString(Paths.get(args[0]));
         script = Files.readString(Paths.get(args[1]));
       } catch (IOException e) {
         throw new IllegalArgumentException("Given invalid file as argument.");
       }
-
-      String inputString = "load " + fileName + "file " + script + "quit";
-      input = new InputStreamReader(new ByteArrayInputStream(inputString.getBytes()));
+      input = new InputStreamReader(new ByteArrayInputStream(script.getBytes()));
       controller = new ImageProcessorControllerImpl(model, view, input);
     } else {
       throw new IllegalArgumentException("Invalid command line argument.");

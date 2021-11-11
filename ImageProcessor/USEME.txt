@@ -1,0 +1,50 @@
+Supported instructions are:
+
+menu (shows all the available supported instructions)
+menu
+
+q or quit (quits the processor)
+quit
+
+load image-path image-name (loads the image, supports PNG, JPG, BMP, and PPM; need to be done at least once to use the operations below)
+load res/pix.png pix
+
+
+save image-path image-name (saves the image, supports PNG, JPG, BMP, and PPM)
+save res/out.png pix
+
+vflip image-name dest-image-name (flips the image over the x axis)
+vflip pix pixV
+
+hflip image-name dest-image-name (flips the image over the y axis)
+hflip pix pixH
+
+brighten increment image-name dest-image-name (brightens the image by the given amount)
+brighten 50 pix pixB
+
+value-component image-name dest-image-name (greyscale the image by the highest value)
+value-component pix pixVal
+
+red-component image-name dest-image-name (greyscale the image by the R value)
+red-component pix pixR
+
+green-component image-name dest-image-name (greyscale the image by the G value)
+green-component pix pixG
+
+blue-component image-name dest-image-name (greyscale the image by the B value)
+blue-component pix pixB
+
+intensity image-name dest-image-name (greyscale the image by the average value)
+intensity pix pixI
+
+luma image-name dest-image-name (greyscale the image by luma value)
+luma pix pixL
+
+blur image-name dest-image-name (blurs the image)
+blur pix pixBlur
+
+sharpen image-name dest-image-name (sharpens the image)
+sharpen pix pixSh
+
+sepia image-name dest-image-name (applies sepia filter on the image)
+sepia pix pixSepia
