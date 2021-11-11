@@ -1,5 +1,7 @@
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.Map;
 
 import model.ImageProcessorModel;
 
@@ -11,6 +13,8 @@ import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 public class ImageProcessorModelMock implements ImageProcessorModel {
   StringBuilder log;
   int mode;
+  Map<String, BufferedImage> bufferedImages;
+  Map<String, String> ppmImages;
 
   /**
    * Constructs a {@code ImageProcessorModelMock} object, works normally by default.
@@ -24,25 +28,40 @@ public class ImageProcessorModelMock implements ImageProcessorModel {
   /**
    * Constructs a {@code ImageProcessorModelMock} object.
    *
-   * @param log log to keep track of activities, inputs, and outputs
+   * @param log  log to keep track of activities, inputs, and outputs
    * @param mode integer to specify the mock's behavior
    *             0 will work normally
    *             1 will always throw the exceptions
+   *             2 is for save only, will return a different image than mode 0
+   *             3 is for load only, will store the image given and return it when save is called
    */
   public ImageProcessorModelMock(StringBuilder log, int mode) {
     this.log = log;
     this.mode = mode;
+    if(mode == 3) {
+      this.bufferedImages = new HashMap<>();
+      this.ppmImages = new HashMap<>();
+    }
   }
 
   @Override
   public void loadImage(BufferedImage image, String imageName) {
-    log.append("Model: Received image from controller as: ")
+    if (this.mode == 3) {
+      this.bufferedImages.put(imageName, image);
+    }
+    log.append("Model: Received BufferedImage from controller as: ")
             .append(imageName).append(System.lineSeparator());
   }
 
   @Override
   public void loadImage(String fileName, String imageName) throws IllegalArgumentException {
-    log.append("Model: Received image from controller as: ")
+    if (this.mode == 1) {
+      log.append("Model: Received invalid ppm file").append(System.lineSeparator());
+      throw new IllegalArgumentException("Error in load");
+    } else if (this.mode == 3) {
+      this.ppmImages.put(imageName, fileName);
+    }
+    log.append("Model: Received ppm image from controller as: ")
             .append(imageName).append(System.lineSeparator());
   }
 
@@ -54,15 +73,17 @@ public class ImageProcessorModelMock implements ImageProcessorModel {
       throw new IllegalArgumentException("Error in save");
     } else if (this.mode == 2) {
       log.append("Model: Sending image 2: ").append(imageName).append(System.lineSeparator());
-      BufferedImage image = new BufferedImage(300, 400, TYPE_INT_RGB);
-      image.setRGB(21, 52, new Color(24, 51, 76).getRGB());
+      BufferedImage image = new BufferedImage(30, 40, TYPE_INT_RGB);
+      image.setRGB(21, 5, new Color(24, 51, 76).getRGB());
+      return image;
+    } else if (this.mode == 3) {
+      return bufferedImages.get(imageName);
+    } else {
+      log.append("Model: Sending image: ").append(imageName).append(System.lineSeparator());
+      BufferedImage image = new BufferedImage(40, 30, TYPE_INT_RGB);
+      image.setRGB(21, 5, new Color(25, 50, 75).getRGB());
       return image;
     }
-
-    log.append("Model: Sending image: ").append(imageName).append(System.lineSeparator());
-    BufferedImage image = new BufferedImage(400, 300, TYPE_INT_RGB);
-    image.setRGB(21, 52, new Color(25, 50, 75).getRGB());
-    return image;
   }
 
   @Override
@@ -74,9 +95,12 @@ public class ImageProcessorModelMock implements ImageProcessorModel {
     } else if (this.mode == 2) {
       log.append("Model: Sending image 2: ").append(imageName).append(System.lineSeparator());
       return "ppm image overwrite";
+    } else if (this.mode == 3) {
+      return ppmImages.get(imageName);
+    } else {
+      log.append("Model: Sending image: ").append(imageName).append(System.lineSeparator());
+      return "ppm image";
     }
-    log.append("Model: Sending image: ").append(imageName).append(System.lineSeparator());
-    return "ppm image";
   }
 
   @Override
