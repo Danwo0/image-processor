@@ -1,5 +1,5 @@
 menu
-load res/clown.png clown
+load clown.png clown
 vflip clown clownV
 hflip clown clownH
 brighten 50 clown clownB
@@ -12,19 +12,19 @@ luma clown clownL
 blur clown clownBlur
 sharpen clown clownSh
 sepia clown clownSepia
-save res/clown.jpg clown
-save res/clown.ppm clown
-save res/clown.bmp clown
-save res/clownV.jpg clownV
-save res/clownH.jpg clownH
-save res/clownB.jpg clownB
-save res/clownVal.jpg clownVal
-save res/clownR.jpg clownR
-save res/clownG.jpg clownG
-save res/clownB.jpg clownB
-save res/clownI.jpg clownI
-save res/clownL.jpg clownL
-save res/clownBlur.jpg clownBlur
-save res/clownSh.jpg clownSh
-save res/clownSepia.jpg clownSepia
+save clown.jpg clown
+save clown.ppm clown
+save clown.bmp clown
+save clownV.jpg clownV
+save clownH.jpg clownH
+save rclownB.jpg clownB
+save clownVal.jpg clownVal
+save clownR.jpg clownR
+save clownG.jpg clownG
+save clownB.jpg clownB
+save clownI.jpg clownI
+save clownL.jpg clownL
+save clownBlur.jpg clownBlur
+save clownSh.jpg clownSh
+save clownSepia.jpg clownSepia
 quit
