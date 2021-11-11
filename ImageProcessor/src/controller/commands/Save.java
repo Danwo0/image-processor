@@ -1,7 +1,7 @@
 package controller.commands;
 
 import java.awt.image.RenderedImage;
-import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -38,7 +38,7 @@ public class Save extends AbstractCommand {
       RenderedImage image;
       try {
         image = m.saveImage(imageName);
-        if (!ImageIO.write(image, format, new File(outName))) {
+        if (!ImageIO.write(image, format, new FileOutputStream(outName))) {
           message = "Given bad format." + System.lineSeparator();
         } else {
           message = "Successfully saved " + imageName + " at "
