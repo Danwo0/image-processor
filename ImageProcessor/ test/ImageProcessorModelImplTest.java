@@ -1,6 +1,7 @@
 import org.junit.Before;
 import org.junit.Test;
 
+import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -33,8 +34,16 @@ public class ImageProcessorModelImplTest {
   private String pixGreyIntensity;
   private String pixVerticalHorizontal;
   private String pixHorizontalVertical;
+  private String pixBlur;
+  private String pixSharpen;
+  private String pixSepia;
 
   private String clown;
+  private BufferedImage clownFile;
+  private BufferedImage clownVerticalFile;
+  private BufferedImage clownVerticalBrighterFile;
+  private BufferedImage clown3BlurFile;
+  private String clownGreyLuma;
 
   @Before
   public void setUp() {
@@ -55,7 +64,16 @@ public class ImageProcessorModelImplTest {
       pixGreyIntensity = Files.readString(Paths.get("ImageProcessor/res/pixGreyIntensity.ppm"));
       pixVerticalHorizontal = Files.readString(Paths.get("ImageProcessor/res/pixVerticalHorizontal.ppm"));
       pixHorizontalVertical = Files.readString(Paths.get("ImageProcessor/res/pixHorizontalVertical.ppm"));
+      pixBlur = Files.readString(Paths.get("ImageProcessor/res/pixBlur.ppm"));
+      pixSharpen = Files.readString(Paths.get("ImageProcessor/res/pixSharpen.ppm"));
+      pixSepia = Files.readString(Paths.get("ImageProcessor/res/pixSepia.ppm"));
+
       clown = Files.readString(Paths.get("ImageProcessor/res/clown.ppm"));
+      clownFile = ImageIO.read(new FileInputStream("ImageProcessor/res/clown.png"));
+      clownVerticalFile = ImageIO.read(new FileInputStream("ImageProcessor/res/clown-vertical.png"));
+      clownVerticalBrighterFile = ImageIO.read(new FileInputStream("ImageProcessor/res/clown-vertical-brighten.png"));
+      clown3BlurFile = ImageIO.read(new FileInputStream("ImageProcessor/res/clown-3blur.png"));
+      clownGreyLuma = Files.readString(Paths.get("ImageProcessor/res/clownGreyLuma.ppm"));
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -96,6 +114,14 @@ public class ImageProcessorModelImplTest {
             "0", "Test");
   }
 
+  private void equalImages(BufferedImage image1, BufferedImage image2) {
+    for (int i = image1.getMinX(); i < image1.getWidth(); i++) {
+      for (int j = image1.getMinY(); j < image1.getHeight(); j++) {
+        assertEquals(image1.getRGB(i, j), image2.getRGB(i, j));
+      }
+    }
+  }
+
   @Test(expected = IllegalArgumentException.class)
   public void loadNonPPM() {
     model.loadImage("ImageProcessor/res/P2.ppm", "haha");
@@ -130,12 +156,6 @@ public class ImageProcessorModelImplTest {
   public void nulltransform() {
     resetModel();
     model.transform("DoesntExist", "Haha", ImageProcessorModel.Transforms.Luma);
-  }
-
-  @Test
-  public void testLoad() {
-    resetModel();
-    assertEquals(model.savePPM("Test"), pix);
   }
 
   @Test
@@ -248,6 +268,36 @@ public class ImageProcessorModelImplTest {
   }
 
   @Test
+  public void testBlur() {
+    resetModel();
+
+    model.filter("Test", "TestOut", ImageProcessorModel.Filters.Blur);
+    model.filter("Test", "Test", ImageProcessorModel.Filters.Blur);
+    assertEquals(model.savePPM("TestOut"), pixBlur);
+    assertEquals(model.savePPM("Test"), pixBlur);
+  }
+
+  @Test
+  public void testSharpen() {
+    resetModel();
+
+    model.filter("Test", "TestOut", ImageProcessorModel.Filters.Sharpen);
+    model.filter("Test", "Test", ImageProcessorModel.Filters.Sharpen);
+    assertEquals(model.savePPM("TestOut"), pixSharpen);
+    assertEquals(model.savePPM("Test"), pixSharpen);
+  }
+
+  @Test
+  public void testSepia() {
+    resetModel();
+
+    model.transform("Test", "TestOut", ImageProcessorModel.Transforms.Sepia);
+    model.transform("Test", "Test", ImageProcessorModel.Transforms.Sepia);
+    assertEquals(model.savePPM("TestOut"), pixSepia);
+    assertEquals(model.savePPM("Test"), pixSepia);
+  }
+
+  @Test
   public void testVerticalHorizontal() {
     resetModel();
 
@@ -266,16 +316,77 @@ public class ImageProcessorModelImplTest {
   }
 
   @Test
-  public void loadPNG() {
+  public void testPPMtoPPM() {
+    resetModel();
+    assertEquals(model.savePPM("Test"), pix);
+  }
+
+  @Test
+  public void testPNGtoPPM() {
     resetModel();
 
-    try {
-      model.loadImage(ImageIO.read(new FileInputStream("ImageProcessor/res/clown.png")),
-              "Test");
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
+    model.loadImage(clownFile, "Test");
     assertEquals(model.savePPM("Test"), clown);
+  }
+
+  @Test
+  public void testPPMtoBuffered() {
+    resetModel();
+
+    model.loadImage(clown, "Test");
+
+    equalImages(model.saveImage("Test"), clownFile);
+  }
+
+  @Test
+  public void testBufferedtoBuffered() {
+    resetModel();
+
+    model.loadImage(clownFile, "Test");
+
+    equalImages(model.saveImage("Test"), clownFile);
+  }
+
+  @Test
+  public void testBufferedtoPPMTransform() {
+    resetModel();
+
+    model.loadImage(clownFile, "Test");
+    model.transform("Test", "Test", ImageProcessorModel.Transforms.Luma);
+
+    assertEquals(model.savePPM("Test"), clownGreyLuma);
+  }
+
+  @Test
+  public void testBufferedtoBufferedVertical() {
+    resetModel();
+
+    model.loadImage(clownFile, "Test");
+    model.flipVertical("Test", "Test");
+
+    equalImages(model.saveImage("Test"), clownVerticalFile);
+  }
+
+  @Test
+  public void testBufferedtoBufferedVerticalBrighten() {
+    resetModel();
+
+    model.loadImage(clownFile, "Test");
+    model.flipVertical("Test", "Test");
+    model.changeBrightness("Test", "Test", 10);
+
+    equalImages(model.saveImage("Test"), clownVerticalBrighterFile);
+  }
+
+  @Test
+  public void testBufferedtoBuffered3Blur() {
+    resetModel();
+
+    model.loadImage(clownFile, "Test");
+    model.filter("Test", "Test", ImageProcessorModel.Filters.Blur);
+    model.filter("Test", "Test", ImageProcessorModel.Filters.Blur);
+    model.filter("Test", "Test", ImageProcessorModel.Filters.Blur);
+
+    equalImages(model.saveImage("Test"), clown3BlurFile);
   }
 }

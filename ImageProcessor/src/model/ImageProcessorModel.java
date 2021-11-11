@@ -8,14 +8,43 @@ import java.awt.image.BufferedImage;
  */
 public interface ImageProcessorModel {
 
+  /**
+   * Loads a buffered image into the model.
+   *
+   * @param image     the image
+   * @param imageName the key for the image in the model
+   * @throws IllegalArgumentException if the given image is null
+   */
   void loadImage(BufferedImage image, String imageName) throws IllegalArgumentException;
 
+  /**
+   * Loads a PPM formatted string into the model.
+   *
+   * @param image_text the string
+   * @param imageName  the key for the image in the model
+   * @throws IllegalArgumentException if the string is not in the format of a ppm
+   */
   void loadImage(String image_text, String imageName) throws IllegalArgumentException;
 
+  /**
+   * Saves an image into a BufferedImage.
+   *
+   * @param imageName the image to save
+   * @return the saved image as a BufferedImage
+   * @throws IllegalArgumentException if the given imageName does not exist within the model
+   */
   BufferedImage saveImage(String imageName) throws IllegalArgumentException;
 
+  /**
+   * Saves an image into a string with PPM formatting
+   *
+   * @param imageName the image to save
+   * @return the saved image as a String in the format of a ppm
+   * @throws IllegalArgumentException if the given imageName does not exist within the model
+   */
 
   String savePPM(String imageName) throws IllegalArgumentException;
+
   /**
    * Change the brightness of the image by the given amount.
    *
@@ -41,6 +70,7 @@ public interface ImageProcessorModel {
 
   /**
    * Applies the given filter to the image
+   *
    * @param in     the image to make changes
    * @param out    the name to save the modified image as
    * @param filter the filter to apply to each pixel
@@ -49,6 +79,7 @@ public interface ImageProcessorModel {
 
   /**
    * Applies the given color transformation to the image
+   *
    * @param in        the image to make changes
    * @param out       the name to save the modified image as
    * @param transform the color transformation to apply to each pixel
