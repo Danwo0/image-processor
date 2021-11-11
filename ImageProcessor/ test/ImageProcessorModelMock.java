@@ -38,7 +38,7 @@ public class ImageProcessorModelMock implements ImageProcessorModel {
   public ImageProcessorModelMock(StringBuilder log, int mode) {
     this.log = log;
     this.mode = mode;
-    if(mode == 3) {
+    if (mode == 3) {
       this.bufferedImages = new HashMap<>();
       this.ppmImages = new HashMap<>();
     }

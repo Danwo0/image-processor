@@ -2,7 +2,6 @@ package controller.commands;
 
 import java.awt.image.RenderedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -36,7 +35,7 @@ public class Save extends AbstractCommand {
     if (format.equalsIgnoreCase("ppm")) {
       completePPM(m);
     } else {
-      RenderedImage image = null;
+      RenderedImage image;
       try {
         image = m.saveImage(imageName);
         if (!ImageIO.write(image, format, new File(outName))) {

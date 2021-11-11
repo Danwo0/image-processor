@@ -20,11 +20,11 @@ public interface ImageProcessorModel {
   /**
    * Loads a PPM formatted string into the model.
    *
-   * @param image_text the string
+   * @param imageText the string
    * @param imageName  the key for the image in the model
    * @throws IllegalArgumentException if the string is not in the format of a ppm
    */
-  void loadImage(String image_text, String imageName) throws IllegalArgumentException;
+  void loadImage(String imageText, String imageName) throws IllegalArgumentException;
 
   /**
    * Saves an image into a BufferedImage.
@@ -36,7 +36,7 @@ public interface ImageProcessorModel {
   BufferedImage saveImage(String imageName) throws IllegalArgumentException;
 
   /**
-   * Saves an image into a string with PPM formatting
+   * Saves an image into a string with PPM formatting.
    *
    * @param imageName the image to save
    * @return the saved image as a String in the format of a ppm
@@ -69,7 +69,7 @@ public interface ImageProcessorModel {
   void value(String in, String out);
 
   /**
-   * Applies the given filter to the image
+   * Applies the given filter to the image.
    *
    * @param in     the image to make changes
    * @param out    the name to save the modified image as
@@ -78,7 +78,7 @@ public interface ImageProcessorModel {
   void filter(String in, String out, Filters filter);
 
   /**
-   * Applies the given color transformation to the image
+   * Applies the given color transformation to the image.
    *
    * @param in        the image to make changes
    * @param out       the name to save the modified image as

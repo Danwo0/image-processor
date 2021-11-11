@@ -1,6 +1,6 @@
 package model;
 
-import java.awt.Color;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,8 +24,8 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
   }
 
   @Override
-  public void loadImage(String image_text, String imageName) throws IllegalArgumentException {
-    Scanner sc = new Scanner(image_text);
+  public void loadImage(String imageText, String imageName) throws IllegalArgumentException {
+    Scanner sc = new Scanner(imageText);
 
     if (!sc.nextLine().equals("P3")) {
       throw new IllegalArgumentException("Invalid PPM file: plain RAW file should begin with P3");
@@ -352,7 +352,8 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
     }
   }
 
-  private void transformPixel(int[][][] in, int[][][] out, int x, int y, int max, double[][] transform) {
+  private void transformPixel(int[][][] in, int[][][] out, int x, int y, int max,
+                              double[][] transform) {
     double[] val = {0, 0, 0};
     int[] color = in[y][x];
 
@@ -367,8 +368,12 @@ public class ImageProcessorModelImpl implements ImageProcessorModel {
 
   private void verifyValues(int[][][] out, int x, int y, int max, double[] val) {
     for (int i = 0; i < 3; i++) {
-      if (val[i] > max) val[i] = max;
-      if (val[i] < 0) val[i] = 0;
+      if (val[i] > max) {
+        val[i] = max;
+      }
+      if (val[i] < 0) {
+        val[i] = 0;
+      }
       out[y][x][i] = (int) Math.round(val[i]);
     }
   }

@@ -3,6 +3,9 @@ package controller.commands;
 import model.ImageProcessorModel;
 import model.ImageProcessorModel.Filters;
 
+/**
+ * The {@code Blur} class represents the operation of the blur command from controller.
+ */
 public class Blur extends AbstractCommand {
   private final String inName;
   private final String outName;

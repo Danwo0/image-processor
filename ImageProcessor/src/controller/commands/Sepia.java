@@ -3,6 +3,9 @@ package controller.commands;
 import model.ImageProcessorModel;
 import model.ImageProcessorModel.Transforms;
 
+/**
+ * The {@code Sepia} class represents the operation of the sepia command from controller.
+ */
 public class Sepia extends AbstractCommand {
   String inName;
   String outName;

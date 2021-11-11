@@ -3,6 +3,9 @@ package controller.commands;
 import model.ImageProcessorModel;
 import model.ImageProcessorModel.Transforms;
 
+/**
+ * The {@code Greyscale} class represents the operation of the greyscale command from controller.
+ */
 public class Greyscale extends AbstractCommand {
   private final String inName;
   private final String outName;

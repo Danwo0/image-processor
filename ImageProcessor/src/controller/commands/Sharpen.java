@@ -3,6 +3,9 @@ package controller.commands;
 import model.ImageProcessorModel;
 import model.ImageProcessorModel.Filters;
 
+/**
+ * The {@code Sharpen} class represents the operation of the sharpen command from controller.
+ */
 public class Sharpen extends AbstractCommand {
   private final String inName;
   private final String outName;

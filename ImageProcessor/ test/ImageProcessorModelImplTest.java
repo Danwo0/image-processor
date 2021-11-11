@@ -13,6 +13,7 @@ import model.ImageProcessorModel;
 import model.ImageProcessorModelImpl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * This is a set of tests for the ImageProcessorModelImpl.
@@ -71,7 +72,8 @@ public class ImageProcessorModelImplTest {
       clown = Files.readString(Paths.get("res/clown.ppm"));
       clownFile = ImageIO.read(new FileInputStream("res/clown.png"));
       clownVerticalFile = ImageIO.read(new FileInputStream("res/clown-vertical.png"));
-      clownVerticalBrighterFile = ImageIO.read(new FileInputStream("res/clown-vertical-brighten.png"));
+      clownVerticalBrighterFile = ImageIO.read(
+              new FileInputStream("res/clown-vertical-brighten.png"));
       clown3BlurFile = ImageIO.read(new FileInputStream("res/clown-3blur.png"));
       clownGreyLuma = Files.readString(Paths.get("res/clownGreyLuma.ppm"));
     } catch (IOException e) {
@@ -114,12 +116,15 @@ public class ImageProcessorModelImplTest {
             "0", "Test");
   }
 
-  private void equalImages(BufferedImage image1, BufferedImage image2) {
+  private boolean equalImages(BufferedImage image1, BufferedImage image2) {
     for (int i = image1.getMinX(); i < image1.getWidth(); i++) {
       for (int j = image1.getMinY(); j < image1.getHeight(); j++) {
-        assertEquals(image1.getRGB(i, j), image2.getRGB(i, j));
+        if (image1.getRGB(i, j) != image2.getRGB(i, j)) {
+          return false;
+        }
       }
     }
+    return true;
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -335,7 +340,7 @@ public class ImageProcessorModelImplTest {
 
     model.loadImage(clown, "Test");
 
-    equalImages(model.saveImage("Test"), clownFile);
+    assertTrue(equalImages(model.saveImage("Test"), clownFile));
   }
 
   @Test
@@ -344,7 +349,7 @@ public class ImageProcessorModelImplTest {
 
     model.loadImage(clownFile, "Test");
 
-    equalImages(model.saveImage("Test"), clownFile);
+    assertTrue(equalImages(model.saveImage("Test"), clownFile));
   }
 
   @Test
@@ -364,7 +369,7 @@ public class ImageProcessorModelImplTest {
     model.loadImage(clownFile, "Test");
     model.flipVertical("Test", "Test");
 
-    equalImages(model.saveImage("Test"), clownVerticalFile);
+    assertTrue(equalImages(model.saveImage("Test"), clownVerticalFile));
   }
 
   @Test
@@ -375,7 +380,7 @@ public class ImageProcessorModelImplTest {
     model.flipVertical("Test", "Test");
     model.changeBrightness("Test", "Test", 10);
 
-    equalImages(model.saveImage("Test"), clownVerticalBrighterFile);
+    assertTrue(equalImages(model.saveImage("Test"), clownVerticalBrighterFile));
   }
 
   @Test
@@ -387,6 +392,6 @@ public class ImageProcessorModelImplTest {
     model.filter("Test", "Test", ImageProcessorModel.Filters.Blur);
     model.filter("Test", "Test", ImageProcessorModel.Filters.Blur);
 
-    equalImages(model.saveImage("Test"), clown3BlurFile);
+    assertTrue(equalImages(model.saveImage("Test"), clown3BlurFile));
   }
 }
