@@ -2,6 +2,7 @@ package controller.commands;
 
 import java.awt.image.RenderedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -39,7 +40,7 @@ public class Save extends AbstractCommand {
       try {
         image = m.saveImage(imageName);
         if (!ImageIO.write(image, format, new File(outName))) {
-          message = "Writing failed." + System.lineSeparator();
+          message = "Given bad format." + System.lineSeparator();
         } else {
           message = "Successfully saved " + imageName + " at "
                   + outName + "." + System.lineSeparator();
@@ -48,7 +49,7 @@ public class Save extends AbstractCommand {
         message = "The given image name does not exist!: "
                 + e.getMessage() + System.lineSeparator();
       } catch (IOException e) {
-        message = "Given filename does not exist!" + System.lineSeparator();
+        message = "Given path does not exist!" + System.lineSeparator();
       }
     }
   }
@@ -65,7 +66,7 @@ public class Save extends AbstractCommand {
       message = "Successfully saved " + imageName + " at "
               + outName + "." + System.lineSeparator();
     } catch (IOException e) {
-      message = "Failed to write to !" + outName + "." + System.lineSeparator();
+      message = "Failed to write to " + outName + "." + System.lineSeparator();
     } catch (IllegalArgumentException e) {
       message = "Given filename does not exist!" + System.lineSeparator();
     }

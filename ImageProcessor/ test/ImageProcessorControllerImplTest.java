@@ -283,12 +283,51 @@ public class ImageProcessorControllerImplTest {
   }
 
   @Test
-  public void testLoadCmd() {
+  public void testLoadPPMCmd() {
     setInput("load res/pix.ppm name q");
     ImageProcessorController controller =
             new ImageProcessorControllerImpl(mockModel, mockView, read);
     String expected = "Model: Received ppm image from controller as: name\n" +
             "View: Rendering message: Successfully loaded res/pix.ppm as name.";
+
+    controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  public void testLoadPNGCmd() {
+    setInput("load res/pix.png name q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModel, mockView, read);
+    String expected = "Model: Received BufferedImage from controller as: name\n" +
+            "View: Rendering message: Successfully loaded res/pix.png as name.";
+
+    controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  public void testLoadJPGCmd() {
+    setInput("load res/pix.jpg name q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModel, mockView, read);
+    String expected = "Model: Received BufferedImage from controller as: name\n" +
+            "View: Rendering message: Successfully loaded res/pix.jpg as name.";
+
+    controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  public void testLoadBMPCmd() {
+    setInput("load res/pix.bmp name q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModel, mockView, read);
+    String expected = "Model: Received BufferedImage from controller as: name\n" +
+            "View: Rendering message: Successfully loaded res/pix.bmp as name.";
 
     controller.startProcessor();
     String actual = getBodyLog(log);
@@ -308,12 +347,63 @@ public class ImageProcessorControllerImplTest {
   }
 
   @Test
-  public void testSaveCmd() {
-    setInput("save output.ppm name q");
+  public void testLoadBadPathImage() {
+    setInput("load bad/badName.png name q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModelBad, mockView, read);
+    String expected = "View: Rendering message: Failed to read from the path";
+
+    controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  public void testSavePPMCmd() {
+    setInput("save res/output.ppm name q");
     ImageProcessorController controller =
             new ImageProcessorControllerImpl(mockModel, mockView, read);
     String expected = "Model: Sending image: name\n" +
-            "View: Rendering message: Successfully saved name at output.ppm.";
+            "View: Rendering message: Successfully saved name at res/output.ppm.";
+
+    controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  public void testSavePNGCmd() {
+    setInput("save res/output.png name q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModel, mockView, read);
+    String expected = "Model: Sending image: name\n" +
+            "View: Rendering message: Successfully saved name at res/output.png.";
+
+    controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  public void testSaveJPGCmd() {
+    setInput("save res/output.jpg name q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModel, mockView, read);
+    String expected = "Model: Sending image: name\n" +
+            "View: Rendering message: Successfully saved name at res/output.jpg.";
+
+    controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  public void testSaveBMPCmd() {
+    setInput("save res/output.bmp name q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModel, mockView, read);
+    String expected = "Model: Sending image: name\n" +
+            "View: Rendering message: Successfully saved name at res/output.bmp.";
 
     controller.startProcessor();
     String actual = getBodyLog(log);
@@ -322,11 +412,37 @@ public class ImageProcessorControllerImplTest {
 
   @Test
   public void testSaveNoImage() {
-    setInput("save output.ppm badName q");
+    setInput("save res/output.ppm badName q");
     ImageProcessorController controller =
             new ImageProcessorControllerImpl(mockModelBad, mockView, read);
     String expected = "Model: badName does not exist.\n" +
             "View: Rendering message: Given filename does not exist!";
+
+    controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  public void testSaveBadPathPPMImage() {
+    setInput("save bad/output.ppm name q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModel, mockView, read);
+    String expected = "Model: Sending image: name\n" +
+            "View: Rendering message: Failed to write to bad/output.ppm.";
+
+    controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  public void testSaveBadPathPNGImage() {
+    setInput("save bad/output.png name q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModel, mockView, read);
+    String expected = "Model: Sending image: name\n" +
+            "View: Rendering message: Given path does not exist!";
 
     controller.startProcessor();
     String actual = getBodyLog(log);
@@ -592,10 +708,88 @@ public class ImageProcessorControllerImplTest {
   }
 
   @Test
+  public void testBlurCmd() {
+    setInput("blur in out q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModel, mockView, read);
+    String expected = "Model: Applying Blur filter on: in; saved as: out\n" +
+            "View: Rendering message: Blurred in.";
+
+    controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  public void testBlurNoImage() {
+    setInput("blur in out q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModelBad, mockView, read);
+    String expected = "Model: in does not exist.\n" +
+            "View: Rendering message: Given image name does not exist!";
+
+    controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  public void testSepiaCmd() {
+    setInput("sepia in out q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModel, mockView, read);
+    String expected = "Model: Applying Sepia color transform on: in; saved as: out\n" +
+            "View: Rendering message: Applied sepia transform on in.";
+
+    controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  public void testSepiaNoImage() {
+    setInput("sepia in out q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModelBad, mockView, read);
+    String expected = "Model: in does not exist.\n" +
+            "View: Rendering message: Given image name does not exist!";
+
+    controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  public void testSharpenCmd() {
+    setInput("sharpen in out q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModel, mockView, read);
+    String expected = "Model: Applying Sharpen filter on: in; saved as: out\n" +
+            "View: Rendering message: Sharpened in.";
+
+    controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  public void testSharpenNoImage() {
+    setInput("sharpen in out q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModelBad, mockView, read);
+    String expected = "Model: in does not exist.\n" +
+            "View: Rendering message: Given image name does not exist!";
+
+    controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+  }
+
+  @Test
   public void testSequence1() {
     setInput("load res/pix.ppm name invalid luma name out vflip name out " +
             "brighten 40 name out hflip name out value-component name out " +
-            "save out.ppm out q");
+            "save res/out.ppm out q");
     ImageProcessorController controller =
             new ImageProcessorControllerImpl(mockModel, mockView, read);
     String expected = "Model: Received ppm image from controller as: name\n" +
@@ -612,7 +806,7 @@ public class ImageProcessorControllerImplTest {
             "Model: Greyscale: name by max value; saved as: out\n" +
             "View: Rendering message: Successfully converted name.\n" +
             "Model: Sending image: out\n" +
-            "View: Rendering message: Successfully saved out at out.ppm.";
+            "View: Rendering message: Successfully saved out at res/out.ppm.";
     controller.startProcessor();
     String actual = getBodyLog(log);
     assertEquals(expected, actual);
@@ -620,9 +814,9 @@ public class ImageProcessorControllerImplTest {
 
   @Test
   public void testSequence2() {
-    setInput("load res/pix.ppm name invalid vflip name out hflip out out save out1.ppm out " +
+    setInput("load res/pix.ppm name invalid vflip name out hflip out out save res/out1.ppm out " +
             "intensity out out load res/pix.ppm name2 red-component name2 out2 brighten " +
-            "-10 out2 out2 invalid save out.ppm out save out2.ppm out2 q");
+            "-10 out2 out2 invalid save res/out.ppm out save res/out2.ppm out2 q");
     ImageProcessorController controller =
             new ImageProcessorControllerImpl(mockModel, mockView, read);
     String expected = "Model: Received ppm image from controller as: name\n" +
@@ -633,7 +827,7 @@ public class ImageProcessorControllerImplTest {
             "Model: Flipping: out over the y-axis; saved as: out\n" +
             "View: Rendering message: Flipped out over the y-axis.\n" +
             "Model: Sending image: out\n" +
-            "View: Rendering message: Successfully saved out at out1.ppm.\n" +
+            "View: Rendering message: Successfully saved out at res/out1.ppm.\n" +
             "Model: Applying Intensity color transform on: out; saved as: out\n" +
             "View: Rendering message: Applied greyscale transform on out.\n" +
             "Model: Received ppm image from controller as: name2\n" +
@@ -644,9 +838,46 @@ public class ImageProcessorControllerImplTest {
             "View: Rendering message: Changed brightness of out2 by -10\n" +
             "View: Rendering message: Given command is invalid!\n" +
             "Model: Sending image: out\n" +
-            "View: Rendering message: Successfully saved out at out.ppm.\n" +
+            "View: Rendering message: Successfully saved out at res/out.ppm.\n" +
             "Model: Sending image: out2\n" +
-            "View: Rendering message: Successfully saved out2 at out2.ppm.";
+            "View: Rendering message: Successfully saved out2 at res/out2.ppm.";
+    controller.startProcessor();
+    String actual = getBodyLog(log);
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  public void testSequence3() {
+    setInput("load res/pix.png name invalid vflip name out sharpen out out " +
+            "save res/out1.ppm out sepia out out load res/pix.jpg name2 " +
+            "load res/pix.ppm name2 blur name2 out2 brighten -10 out2 out2 " +
+            "invalid save res/out.bmp out save res/out2.png out2 q");
+    ImageProcessorController controller =
+            new ImageProcessorControllerImpl(mockModel, mockView, read);
+    String expected = "Model: Received BufferedImage from controller as: name\n" +
+            "View: Rendering message: Successfully loaded res/pix.png as name.\n" +
+            "View: Rendering message: Given command is invalid!\n" +
+            "Model: Flipping: name over the x-axis; saved as: out\n" +
+            "View: Rendering message: Flipped name over the x-axis.\n" +
+            "Model: Applying Sharpen filter on: out; saved as: out\n" +
+            "View: Rendering message: Sharpened out.\n" +
+            "Model: Sending image: out\n" +
+            "View: Rendering message: Successfully saved out at res/out1.ppm.\n" +
+            "Model: Applying Sepia color transform on: out; saved as: out\n" +
+            "View: Rendering message: Applied sepia transform on out.\n" +
+            "Model: Received BufferedImage from controller as: name2\n" +
+            "View: Rendering message: Successfully loaded res/pix.jpg as name2.\n" +
+            "Model: Received ppm image from controller as: name2\n" +
+            "View: Rendering message: Successfully loaded res/pix.ppm as name2.\n" +
+            "Model: Applying Blur filter on: name2; saved as: out2\n" +
+            "View: Rendering message: Blurred name2.\n" +
+            "Model: Changing brightness of: out2, by -10; saved as: out2\n" +
+            "View: Rendering message: Changed brightness of out2 by -10\n" +
+            "View: Rendering message: Given command is invalid!\n" +
+            "Model: Sending image: out\n" +
+            "View: Rendering message: Successfully saved out at res/out.bmp.\n" +
+            "Model: Sending image: out2\n" +
+            "View: Rendering message: Successfully saved out2 at res/out2.png.";
     controller.startProcessor();
     String actual = getBodyLog(log);
     assertEquals(expected, actual);

@@ -32,7 +32,7 @@ public class ImageProcessorModelMock implements ImageProcessorModel {
    * @param mode integer to specify the mock's behavior
    *             0 will work normally
    *             1 will always throw the exceptions
-   *             2 is for save only, will return a different image than 1
+   *             2 is for save only, will return a different image than mode 0
    *             3 is for load only, will store the image given and return it when save is called
    */
   public ImageProcessorModelMock(StringBuilder log, int mode) {
