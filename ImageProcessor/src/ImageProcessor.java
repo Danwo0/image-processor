@@ -1,15 +1,21 @@
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import javax.imageio.ImageIO;
+
 import controller.ImageProcessorController;
 import controller.ImageProcessorControllerImpl;
 import model.ImageProcessorModel;
 import model.ImageProcessorModelImpl;
+import view.ImageProcessorGuiView;
 import view.ImageProcessorView;
 import view.ImageProcessorViewImpl;
+import view.SwingGuiView;
 
 /**
  * The {@code ImageProcessor} is a class for initializing the Image Processor through main.
@@ -21,7 +27,7 @@ public class ImageProcessor {
    *
    * @param args command line arguments
    */
-  public static void main(String[] args) {
+  public static void main1(String[] args) {
     ImageProcessorModel model = new ImageProcessorModelImpl();
     ImageProcessorView view = new ImageProcessorViewImpl();
     ImageProcessorController controller;
@@ -44,4 +50,19 @@ public class ImageProcessor {
     }
     controller.startProcessor();
   }
+
+  public static void main(String[] args) {
+    ImageProcessorModel model = new ImageProcessorModelImpl();
+
+    try {
+      model.loadImage(ImageIO.read(new FileInputStream("ImageProcessor/res/clown.png")), "Test");
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    ImageProcessorGuiView view = new SwingGuiView(model);
+
+    view.refresh();
+  }
 }
+
