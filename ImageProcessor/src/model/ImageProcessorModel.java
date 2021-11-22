@@ -49,24 +49,28 @@ public interface ImageProcessorModel {
    * Change the brightness of the image by the given amount.
    *
    * @param amount amount to brighten or darken the image by
-   * @throws IllegalArgumentException if given amount is invalid
+   * @throws IllegalArgumentException if given amount is invalid or if the image name is not in the
+   * model
    */
   void changeBrightness(String in, String out, int amount) throws IllegalArgumentException;
 
   /**
    * Flips the image over the x-axis.
+   * @throws IllegalArgumentException if the image name is not in the model
    */
-  void flipVertical(String in, String out);
+  void flipVertical(String in, String out) throws IllegalArgumentException;
 
   /**
    * Flips the image over the y-axis.
+   * @throws IllegalArgumentException if the image name is not in the model
    */
-  void flipHorizontal(String in, String out);
+  void flipHorizontal(String in, String out) throws IllegalArgumentException;
 
   /**
    * Makes the image black and white by the highest RGB value in a pixel.
+   * @throws IllegalArgumentException if the image name is not in the model
    */
-  void value(String in, String out);
+  void value(String in, String out) throws IllegalArgumentException;
 
   /**
    * Applies the given filter to the image.
@@ -74,8 +78,9 @@ public interface ImageProcessorModel {
    * @param in     the image to make changes
    * @param out    the name to save the modified image as
    * @param filter the filter to apply to each pixel
+   * @throws IllegalArgumentException if the image name is not in the model
    */
-  void filter(String in, String out, Filters filter);
+  void filter(String in, String out, Filters filter) throws IllegalArgumentException;
 
   /**
    * Applies the given color transformation to the image.
@@ -83,8 +88,9 @@ public interface ImageProcessorModel {
    * @param in        the image to make changes
    * @param out       the name to save the modified image as
    * @param transform the color transformation to apply to each pixel
+   * @throws IllegalArgumentException if the image name is not in the model
    */
-  void transform(String in, String out, Transforms transform);
+  void transform(String in, String out, Transforms transform) throws IllegalArgumentException;
 
   /**
    * This enum represents the possible mode for color transform.
