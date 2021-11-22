@@ -8,6 +8,8 @@ import java.nio.file.Paths;
 
 import javax.imageio.ImageIO;
 
+import controller.ControllerGUI;
+import controller.Features;
 import controller.ImageProcessorController;
 import controller.ImageProcessorControllerImpl;
 import model.ImageProcessorModel;
@@ -55,14 +57,15 @@ public class ImageProcessor {
     ImageProcessorModel model = new ImageProcessorModelImpl();
 
     try {
-      model.loadImage(ImageIO.read(new FileInputStream("ImageProcessor/res/clown.png")), "Test");
+      model.loadImage(ImageIO.read(new FileInputStream("res/clown.png")), "Test");
     } catch (IOException e) {
       e.printStackTrace();
     }
 
-    ImageProcessorGuiView view = new SwingGuiView(model);
+    ImageProcessorGuiView view = new SwingGuiView();
+    ControllerGUI controller = new ControllerGUI(model);
+    controller.setView(view);
 
-    view.refresh();
   }
 }
 

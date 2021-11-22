@@ -1,5 +1,9 @@
 package view;
 
+import java.awt.image.BufferedImage;
+
+import controller.Features;
+
 /**
  * This interface represents a GUI view for the Image Processor.
  */
@@ -16,4 +20,8 @@ public interface ImageProcessorGuiView {
    * @param message the message to be displayed
    */
   void renderMessage(String message);
+
+  void renderImage(BufferedImage image);
+
+  void addFeatures(Features features);
 }
