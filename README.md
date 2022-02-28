@@ -1,4 +1,4 @@
-# CS3500
+# Image Processor for CS3500
 
 UPDATE HW5:
 The controller and model should be complete and fully functional; view still contains the bare minimum of printing out the feedback message
